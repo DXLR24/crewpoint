@@ -774,9 +774,11 @@ body{font-family:var(--font-sans);color:var(--text-secondary);background:var(--b
 
   /* Header */
   .nav{display:none}
-  .burger{display:flex}
-  .logo-icon{width:84px;height:44px}
-  .logo-name{height:30px}
+  .header .container{display:flex;align-items:center;justify-content:center;position:relative}
+  .header .logo{gap:8px}
+  .header .logo-icon{width:56px;height:44px}
+  .header .logo-name{height:28px}
+  .header .burger{display:flex;position:absolute;right:0;top:50%;transform:translateY(-50%)}
 
   /* Hero */
   .hero{min-height:auto;padding:120px 0 60px}
@@ -861,6 +863,3 @@ body{font-family:var(--font-sans);color:var(--text-secondary);background:var(--b
 @media(max-width:480px){
   .reveal{opacity:1;transform:none;transition:none}
 }
-.header .container{gap:8px}
-.logo{gap:8px;flex:1;justify-content:center}
-.burger{flex-shrink:0;margin-left:auto}
