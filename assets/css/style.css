@@ -177,6 +177,33 @@ body{font-family:var(--font-sans);color:var(--text-secondary);background:var(--b
 .h-step h4{font-size:.85rem;font-weight:600;color:var(--text-primary);margin-bottom:2px}
 .h-step p{font-size:.78rem;color:var(--text-muted);line-height:1.5}
 
+/* Detail hint — subtle link between sections */
+.detail-hint{
+  text-align:center;
+  padding:0 32px 48px;
+  margin-bottom:0
+}
+.detail-hint a{
+  color:var(--text-muted);
+  font-size:.82rem;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:color .4s var(--ease);
+  letter-spacing:.2px
+}
+.detail-hint a:hover{
+  color:var(--gold)
+}
+.detail-hint .hint-arrow{
+  font-size:.75rem;
+  transition:transform .3s var(--ease)
+}
+.detail-hint a:hover .hint-arrow{
+  transform:translateX(3px)
+}
+
 /* ═══════════════════════════════════
    MINI HERO (details.html)
    ═══════════════════════════════════ */
