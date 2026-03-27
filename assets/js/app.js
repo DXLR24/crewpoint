@@ -53,7 +53,12 @@ window.addEventListener('scroll', function() {
 function toggleMenu() {
     if (!mobileMenu) return;
     mobileMenu.classList.toggle('active');
-    document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+    var isOpen = mobileMenu.classList.contains('active');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (burgerBtn) {
+        burgerBtn.setAttribute('aria-expanded', isOpen);
+        burgerBtn.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'Открыть меню');
+    }
 }
 
 var burgerBtn   = $('#burgerBtn');
@@ -435,6 +440,7 @@ function openSheet() {
     sheet.setAttribute('aria-hidden', 'false');
     sheetOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+    if (openSheetBtn) openSheetBtn.setAttribute('aria-expanded', 'true');
 }
 
 function closeSheet() {
@@ -443,6 +449,7 @@ function closeSheet() {
     sheet.setAttribute('aria-hidden', 'true');
     sheetOverlay.classList.remove('active');
     document.body.style.overflow = '';
+    if (openSheetBtn) openSheetBtn.setAttribute('aria-expanded', 'false');
 }
 
 var openSheetBtn = $('#openSheetBtn');
