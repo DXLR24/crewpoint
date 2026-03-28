@@ -553,7 +553,7 @@ $$('.sheet-util-btn[data-copy]').forEach(function(btn) {
 
     var brochureUrl      = 'assets/images/crewpoint-brochure.png';
     var shareText        = 'Карьера в море за 1 месяц. Документы за 14 дней, подбор контракта, зарплата от 150 000 ₽/мес. Мне помогли — рекомендую.';
-    var shareUrl         = 'https://crewpoint.ru';
+    var shareUrl         = 'https://dxlr24.github.io/crewpoint/';
     var shareBtnOrigHTML = shareBtn.innerHTML;
 
     shareBtn.addEventListener('click', function() {
