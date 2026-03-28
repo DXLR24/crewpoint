@@ -820,6 +820,11 @@ body{font-family:var(--font-sans);color:var(--text-secondary);background:var(--b
     margin:0;
   }
 
+  .header .logo:hover .logo-icon{
+    filter:none !important;
+    transform:translate(-50%,-50%) !important;
+  }
+
   /* якорь — отдельно, абсолютно слева */
   .header .logo-icon{
     position:absolute;
