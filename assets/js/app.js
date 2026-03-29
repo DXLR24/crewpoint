@@ -291,20 +291,18 @@ function updateRoiGauge(percent) {
 
 
 // ══════════════════════════════════════
-// FORM → TELEGRAM
+// FORM → TELEGRAM (через Cloudflare Worker)
 // ══════════════════════════════════════
-var TELEGRAM_BOT_TOKEN = '8442769129:AAG7yum9YnVFWM7dG03hvRWuRYgoRsoS2BE';  // ← твой токен
-var TELEGRAM_CHAT_ID   = '7212120183';                                  // ← твой chat_id
+var FORM_PROXY_URL = 'https://crewpoint-form.pubgdix.workers.dev';  // ← вставь свой URL
 
 var formSubmitBtn = $('#formSubmitBtn');
 if (formSubmitBtn) {
     formSubmitBtn.addEventListener('click', function() {
-        var name    = $('#formName');
-        var phone   = $('#formPhone');
-        var pkg     = $('#formPackage');
-        var city    = $('#formCity');
+        var name  = $('#formName');
+        var phone = $('#formPhone');
+        var pkg   = $('#formPackage');
+        var city  = $('#formCity');
 
-        // Валидация
         if (!name.value.trim()) {
             name.style.borderColor = 'var(--red)';
             name.focus();
@@ -316,11 +314,9 @@ if (formSubmitBtn) {
             return;
         }
 
-        // Блокируем кнопку
         formSubmitBtn.disabled = true;
         formSubmitBtn.textContent = 'Отправка...';
 
-        // Собираем текст сообщения
         var packageNames = {
             'docs':    'Сопровождение (Документы) — 55 000 ₽',
             'start':   'Старт карьеры — 120 000 ₽',
@@ -339,48 +335,31 @@ if (formSubmitBtn) {
 
         var page = window.location.pathname.includes('details') ? 'details.html' : 'index.html';
 
-        var message = '🚀 *Новая заявка с сайта!*\n\n'
-            + '👤 *Имя:* ' + name.value.trim() + '\n'
-            + '📞 *Телефон:* ' + phone.value.trim() + '\n'
-            + '📦 *Пакет:* ' + (packageNames[pkg.value] || 'Не выбран') + '\n'
-            + '🏙 *Город:* ' + (city.value.trim() || 'Не указан') + '\n'
-            + '───────────────\n'
-            + '📄 *Страница:* ' + page + '\n'
-            + '🕐 *Время:* ' + time;
-
-        // Отправляем в Telegram
-        fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
+        fetch(FORM_PROXY_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
+                name:    name.value.trim(),
+                phone:   phone.value.trim(),
+                package: packageNames[pkg.value] || 'Не выбран',
+                city:    city.value.trim() || 'Не указан',
+                page:    page,
+                time:    time
             })
         })
         .then(function(response) {
-            if (!response.ok) throw new Error('Telegram API error');
-            return response.json();
-        })
-        .then(function(data) {
-            if (data.ok) {
-                // Успех
+            if (response.ok) {
                 $('#ctaForm').style.display = 'none';
                 $('#formSuccess').classList.add('show');
             } else {
-                throw new Error('Telegram rejected');
+                throw new Error('Server error');
             }
         })
         .catch(function(error) {
-            // Ошибка — всё равно показываем успех пользователю
-            // но логируем для отладки
-            console.error('Telegram send error:', error);
-
-            // Показываем успех (чтобы не потерять клиента)
+            console.error('Form send error:', error);
             $('#ctaForm').style.display = 'none';
             $('#formSuccess').classList.add('show');
 
-            // Сохраняем в localStorage как запасной вариант
             var leads = JSON.parse(localStorage.getItem('crewpoint_leads') || '[]');
             leads.push({
                 name: name.value.trim(),
