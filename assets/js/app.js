@@ -294,7 +294,7 @@ function updateRoiGauge(percent) {
 // FORM → TELEGRAM
 // ══════════════════════════════════════
 var TELEGRAM_BOT_TOKEN = '8442769129:AAG7yum9YnVFWM7dG03hvRWuRYgoRsoS2BE';  // ← твой токен
-var TELEGRAM_CHAT_ID   = '663910245';                                  // ← твой chat_id
+var TELEGRAM_CHAT_ID   = '7212120183';                                  // ← твой chat_id
 
 var formSubmitBtn = $('#formSubmitBtn');
 if (formSubmitBtn) {
@@ -349,7 +349,7 @@ if (formSubmitBtn) {
             + '🕐 *Время:* ' + time;
 
         // Отправляем в Telegram
-        fetch('https://api.telegram.org/bot8442769129:AAG7yum9YnVFWM7dG03hvRWuRYgoRsoS2BE/sendMessage?chat_id=663910245&text=test' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
+        fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
