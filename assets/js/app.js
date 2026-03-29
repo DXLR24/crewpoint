@@ -291,17 +291,107 @@ function updateRoiGauge(percent) {
 
 
 // ══════════════════════════════════════
-// FORM
+// FORM → TELEGRAM
 // ══════════════════════════════════════
+var TELEGRAM_BOT_TOKEN = '8442769129:AAG7yum9YnVFWM7dG03hvRWuRYgoRsoS2BE';  // ← твой токен
+var TELEGRAM_CHAT_ID   = '663910245';                                  // ← твой chat_id
+
 var formSubmitBtn = $('#formSubmitBtn');
 if (formSubmitBtn) {
     formSubmitBtn.addEventListener('click', function() {
-        var name  = $('#formName');
-        var phone = $('#formPhone');
-        if (!name.value.trim())  { name.style.borderColor  = 'var(--red)'; name.focus();  return; }
-        if (!phone.value.trim() || phone.value.length < 7) { phone.style.borderColor = 'var(--red)'; phone.focus(); return; }
-        $('#ctaForm').style.display = 'none';
-        $('#formSuccess').classList.add('show');
+        var name    = $('#formName');
+        var phone   = $('#formPhone');
+        var pkg     = $('#formPackage');
+        var city    = $('#formCity');
+
+        // Валидация
+        if (!name.value.trim()) {
+            name.style.borderColor = 'var(--red)';
+            name.focus();
+            return;
+        }
+        if (!phone.value.trim() || phone.value.length < 7) {
+            phone.style.borderColor = 'var(--red)';
+            phone.focus();
+            return;
+        }
+
+        // Блокируем кнопку
+        formSubmitBtn.disabled = true;
+        formSubmitBtn.textContent = 'Отправка...';
+
+        // Собираем текст сообщения
+        var packageNames = {
+            'docs':    'Сопровождение (Документы) — 55 000 ₽',
+            'start':   'Старт карьеры — 120 000 ₽',
+            'pro':     'Карьера PRO — 240 000 ₽',
+            'upgrade': 'Повышение до вахтенного — 120 000 ₽',
+            'crab':    'Краболовный флот — 150 000 ₽',
+            'global':  'Международный флот (под флагом)',
+            'unsure':  'Пока не определился'
+        };
+
+        var now = new Date();
+        var time = now.toLocaleString('ru-RU', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        var page = window.location.pathname.includes('details') ? 'details.html' : 'index.html';
+
+        var message = '🚀 *Новая заявка с сайта!*\n\n'
+            + '👤 *Имя:* ' + name.value.trim() + '\n'
+            + '📞 *Телефон:* ' + phone.value.trim() + '\n'
+            + '📦 *Пакет:* ' + (packageNames[pkg.value] || 'Не выбран') + '\n'
+            + '🏙 *Город:* ' + (city.value.trim() || 'Не указан') + '\n'
+            + '───────────────\n'
+            + '📄 *Страница:* ' + page + '\n'
+            + '🕐 *Время:* ' + time;
+
+        // Отправляем в Telegram
+        fetch('https://api.telegram.org/bot8442769129:AAG7yum9YnVFWM7dG03hvRWuRYgoRsoS2BE/sendMessage?chat_id=663910245&text=test' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        })
+        .then(function(response) {
+            if (!response.ok) throw new Error('Telegram API error');
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.ok) {
+                // Успех
+                $('#ctaForm').style.display = 'none';
+                $('#formSuccess').classList.add('show');
+            } else {
+                throw new Error('Telegram rejected');
+            }
+        })
+        .catch(function(error) {
+            // Ошибка — всё равно показываем успех пользователю
+            // но логируем для отладки
+            console.error('Telegram send error:', error);
+
+            // Показываем успех (чтобы не потерять клиента)
+            $('#ctaForm').style.display = 'none';
+            $('#formSuccess').classList.add('show');
+
+            // Сохраняем в localStorage как запасной вариант
+            var leads = JSON.parse(localStorage.getItem('crewpoint_leads') || '[]');
+            leads.push({
+                name: name.value.trim(),
+                phone: phone.value.trim(),
+                package: pkg.value,
+                city: city.value.trim(),
+                time: new Date().toISOString(),
+                page: page
+            });
+            localStorage.setItem('crewpoint_leads', JSON.stringify(leads));
+        });
     });
 }
 
