@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrewPoint — Подбор экипажа для судовладельцев | Закроем вакансии за 10–14 дней</title>
+    <meta name="description" content="CrewPoint — подбор проверенных моряков рядового состава для судоходных компаний. Закрываем вакансии за 10–14 дней. Полный цикл от подбора до посадки на судно. Оплата по факту.">
+    <meta name="theme-color" content="#080C14">
+    <meta name="color-scheme" content="dark">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dxlr24.github.io/crewpoint/for-owners.html">
+<meta property="og:title" content="CrewPoint — Подбор экипажа для судовладельцев">
+<meta property="og:description" content="Закроем вакансии рядового состава за 10–14 дней. Проверенные кандидаты с полным пакетом документов. Полный цикл от подбора до посадки на судно. Оплата по факту.">
+<meta property="og:image" content="https://dxlr24.github.io/crewpoint/assets/images/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="CrewPoint">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CrewPoint — Подбор экипажа для судовладельцев">
+<meta name="twitter:description" content="Закроем вакансии за 10–14 дней. Проверенные моряки с документами. Оплата по факту посадки.">
+<meta name="twitter:image" content="https://dxlr24.github.io/crewpoint/assets/images/og-cover.png">
+
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+    /* for-owners.html — minimal additions */
+    .form-group textarea{width:100%;padding:16px 20px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius);font-family:var(--font-sans);font-size:.9rem;color:var(--text-primary);transition:all .3s var(--ease);resize:vertical;min-height:100px}
+    .form-group textarea::placeholder{color:var(--text-muted)}
+    .form-group textarea:focus{outline:none;border-color:var(--gold)}
+    #ctaFormOwners{max-width:520px}
+    .cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+    @media(max-width:768px){.cta-buttons{flex-direction:column;align-items:stretch}.cta-buttons .btn{width:100%}}
+    </style>
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "CrewPoint",
+  "description": "Подбор морских специалистов рядового состава для судовладельцев и судоходных компаний. Закрываем вакансии за 10–14 дней. Полный цикл от подбора до посадки на судно.",
+  "url": "https://dxlr24.github.io/crewpoint/for-owners.html",
+  "telephone": "+79952337540",
+  "email": "crewpoint_job@mail.ru",
+  "serviceType": ["Подбор морского персонала", "Оформление морских документов", "Рекрутинг моряков"],
+  "areaServed": {
+    "@type": "Country",
+    "name": "Russia"
+  },
+  "priceRange": "от 40000₽",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "RU"
+  },
+  "sameAs": [
+    "https://t.me/crewpoint",
+    "https://wa.me/79952337540"
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     HEADER
+     ═══════════════════════════════════ -->
+<header class="header" id="header">
+    <div class="container">
+        <a href="index.html" class="logo">
+            <img src="assets/images/logo-anchor.png" alt="CrewPoint" class="logo-icon" width="54" height="54">
+            <img src="assets/images/logo-text.png" alt="CrewPoint" class="logo-name" height="28">
+        </a>
+        <nav class="nav">
+            <a href="#advantages">Преимущества</a>
+            <a href="#services">Услуги</a>
+            <a href="#tariffs">Тарифы</a>
+            <a href="#guarantees">Гарантии</a>
+            <a href="#cases">Кейсы</a>
+            <a href="#form" class="btn btn--gold btn--sm">Оставить заявку</a>
+        </nav>
+        <button class="burger" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose" aria-label="Закрыть меню">&#x2715;</button>
+    <a href="index.html">Главная</a>
+    <a href="#advantages">Преимущества</a>
+    <a href="#services">Услуги</a>
+    <a href="#tariffs">Тарифы</a>
+    <a href="#guarantees">Гарантии</a>
+    <a href="#cases">Кейсы</a>
+    <a href="#form" class="btn btn--gold">Оставить заявку</a>
+</div>
+
+<!-- ═══════════════════════════════════
+     MINI HERO
+     ═══════════════════════════════════ -->
+<section class="mini-hero bg-dark text-center">
+    <div class="container">
+        <span class="label">Для судовладельцев и судоходных компаний</span>
+        <h1>Закроем вакансии рядового состава — <span class="accent">за 10–14 дней</span></h1>
+        <p>Проверенные кандидаты с полным пакетом документов. Полный цикл от подбора до посадки на судно. Без простоев флота.</p>
+        <div class="mini-hero-nav">
+            <a href="#advantages">Преимущества</a>
+            <a href="#services">Услуги</a>
+            <a href="#tariffs">Тарифы</a>
+            <a href="#guarantees">Гарантии</a>
+            <a href="#cases">Кейсы</a>
+            <a href="#form">Оставить заявку</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     БОЛИ СУДОВЛАДЕЛЬЦЕВ
+     ═══════════════════════════════════ -->
+<section class="section bg-navy">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Знакомо?</span>
+            <h2 class="title">С чем сталкиваются судовладельцы</h2>
+            <p class="subtitle">Простои флота, срывы рейсов и кадровые проблемы обходятся дороже любого рекрутинга</p>
+        </div>
+        <div class="problems-compact reveal">
+            <div class="problem-row">
+                <span class="problem-x">&#10005;</span>
+                <p><strong>Срочная вакансия, а кандидатов нет — судно простаивает.</strong> Каждый день простоя — прямые убытки. А поиск моряка «с нуля» занимает недели.</p>
+            </div>
+            <div class="problem-row">
+                <span class="problem-x">&#10005;</span>
+                <p><strong>Кандидат приходит без документов или с просроченными.</strong> На проверку и переоформление уходит ещё 2–3 месяца. Выход в рейс откладывается.</p>
+            </div>
+            <div class="problem-row">
+                <span class="problem-x">&#10005;</span>
+                <p><strong>Моряк уходит в первую неделю — и всё сначала.</strong> Нет проверки мотивации и рекомендаций. Текучка съедает бюджет и время.</p>
+            </div>
+            <div class="problem-row">
+                <span class="problem-x">&#10005;</span>
+                <p><strong>Агентства берут предоплату и пропадают.</strong> Или присылают неподходящих кандидатов, а деньги уже заплачены. Ни гарантий, ни ответственности.</p>
+            </div>
+            <div class="problem-row">
+                <span class="problem-x">&#10005;</span>
+                <p><strong>Нет единого партнёра для разных типов флота.</strong> Для рыболовного — одно агентство, для танкеров — другое, для краболовов — третье. Каждый раз заново объяснять требования.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ПРЕИМУЩЕСТВА
+     ═══════════════════════════════════ -->
+<section class="section bg-dark" id="advantages">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Почему CrewPoint</span>
+            <h2 class="title">Что мы даём <span class="accent">судовладельцам</span></h2>
+            <p class="subtitle">Один партнёр для всех типов флота. От заявки до моряка на борту — без лишних звеньев.</p>
+        </div>
+        <div class="guarantee-grid reveal">
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Кандидаты с полным пакетом документов</h4><p>УЛМ, сертификаты STCW, мореходная книжка, медкомиссия, дактилоскопия — всё проверено и в порядке до посадки.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Закрываем вакансию за 10–14 дней</h4><p>От заявки до посадки моряка на судно. Срочный подбор — до 7 дней. Без простоев вашего флота.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Собственная база 500+ проверенных моряков</h4><p>Не ищем на сайтах объявлений. Работаем с проверенными кандидатами, которые прошли через нашу платформу.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Все типы флота — один партнёр</h4><p>Рыбопромысловый, краболовный, танкерный, перегрузчики, международный. Не нужно работать с пятью агентствами.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Гарантия бесплатной замены — 14 дней</h4><p>Если моряк не подошёл в первые 14 дней рейса — предоставим замену за наш счёт. Прописано в договоре.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Оплата по факту — после посадки на судно</h4><p>Основная оплата только после того, как моряк сел на борт. Не берём деньги за обещания.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Берём на себя документы, медкомиссию, логистику</h4><p>Если у кандидата не хватает документов — оформим за 14 дней. Организуем медкомиссию и доставку до порта.</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     УСЛУГИ
+     ═══════════════════════════════════ -->
+<section class="section bg-navy" id="services">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Услуги</span>
+            <h2 class="title">Что мы делаем для <span class="accent">вашего флота</span></h2>
+            <p class="subtitle">Три формата работы — от точечного подбора до полного цикла</p>
+        </div>
+        <div class="career-branches reveal">
+            <!-- Подбор -->
+            <div class="branch branch--comfort">
+                <span class="branch-badge badge-blue">Базовый</span>
+                <h3>Подбор рядового состава</h3>
+                <p class="b-desc">Подбор матросов, мотористов и рядового состава. Проверка документов, квалификации и рекомендаций. Организация собеседований.</p>
+                <ul class="branch-features">
+                    <li><span class="ck">&#10003;</span> Поиск по базе 500+ проверенных моряков</li>
+                    <li><span class="ck">&#10003;</span> Проверка документов и квалификации</li>
+                    <li><span class="ck">&#10003;</span> Проверка рекомендаций с предыдущих рейсов</li>
+                    <li><span class="ck">&#10003;</span> Организация собеседований</li>
+                    <li><span class="ck">&#10003;</span> Гарантия замены 14 дней</li>
+                    <li><span class="ck">&#10003;</span> Оплата после посадки на судно</li>
+                </ul>
+                <a href="#form" class="btn btn--primary btn--full btn--sm">Оставить заявку</a>
+            </div>
+            <!-- Документы -->
+            <div class="branch branch--capital">
+                <span class="branch-badge badge-orange">Документы</span>
+                <h3>Документы под ключ</h3>
+                <p class="b-desc">Если у кандидата не хватает документов — оформим за 14 дней. Полный пакет для выхода в рейс без задержек.</p>
+                <ul class="branch-features">
+                    <li><span class="ck">&#10003;</span> Сертификаты STCW через аккредитованные центры</li>
+                    <li><span class="ck">&#10003;</span> Оформление УЛМ и мореходной книжки</li>
+                    <li><span class="ck">&#10003;</span> Организация медкомиссии и дактилоскопии</li>
+                    <li><span class="ck">&#10003;</span> Все документы в государственных реестрах</li>
+                    <li><span class="ck">&#10003;</span> Сертификаты курьером в любой порт</li>
+                    <li><span class="ck">&#10003;</span> 14 дней вместо 5 месяцев</li>
+                </ul>
+                <a href="#form" class="btn btn--orange btn--full btn--sm">Оставить заявку</a>
+            </div>
+            <!-- Полный цикл -->
+            <div class="branch branch--global">
+                <span class="branch-badge badge-cyan">Премиум</span>
+                <h3>Полный цикл</h3>
+                <p class="b-desc">От заявки до моряка на борту. Подбор, документы, медкомиссия, логистика, сопровождение. Вы получаете готового специалиста.</p>
+                <ul class="branch-features">
+                    <li><span class="ck">&#10003;</span> Всё из «Подбор» + «Документы»</li>
+                    <li><span class="ck">&#10003;</span> Логистика до порта посадки</li>
+                    <li><span class="ck">&#10003;</span> Подготовка моряка к конкретному типу судна</li>
+                    <li><span class="ck">&#10003;</span> Сопровождение в первые дни рейса</li>
+                    <li><span class="ck">&#10003;</span> Персональный менеджер на весь цикл</li>
+                    <li><span class="ck">&#10003;</span> Расширенная гарантия замены</li>
+                </ul>
+                <a href="#form" class="btn btn--cyan btn--full btn--sm">Оставить заявку</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ТАРИФЫ
+     ═══════════════════════════════════ -->
+<section class="section bg-dark" id="tariffs">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Прозрачные цены</span>
+            <h2 class="title">Тарифы на подбор экипажа</h2>
+            <p class="subtitle">Фиксированные ставки. Основная оплата — после посадки моряка на судно.</p>
+        </div>
+        <div class="comp-table reveal">
+            <div class="comp-row comp-row--head"><div class="comp-cell">Услуга</div><div class="comp-cell">Стоимость</div><div class="comp-cell">Оплата</div></div>
+            <div class="comp-row"><div class="comp-cell"><strong>Подбор матроса (рыбопромысловый флот)</strong></div><div class="comp-cell">от 40 000 ₽</div><div class="comp-cell">После посадки</div></div>
+            <div class="comp-row"><div class="comp-cell"><strong>Подбор матроса (краболовный флот)</strong></div><div class="comp-cell">от 80 000 ₽</div><div class="comp-cell">После посадки</div></div>
+            <div class="comp-row"><div class="comp-cell"><strong>Подбор матроса (танкеры / перегрузчики)</strong></div><div class="comp-cell">от 60 000 ₽</div><div class="comp-cell">После посадки</div></div>
+            <div class="comp-row"><div class="comp-cell"><strong>Международный флот</strong></div><div class="comp-cell">от $500</div><div class="comp-cell">После посадки</div></div>
+            <div class="comp-row"><div class="comp-cell"><strong>Оформление документов кандидату</strong></div><div class="comp-cell">от 40 000 ₽</div><div class="comp-cell">Предоплата</div></div>
+            <div class="comp-row"><div class="comp-cell"><strong>Срочный подбор (до 7 дней)</strong></div><div class="comp-cell">+30% к тарифу</div><div class="comp-cell">После посадки</div></div>
+        </div>
+        <p class="pricing-note reveal">Индивидуальные условия для компаний с регулярным объёмом от 5 моряков в месяц. <a href="#form" style="color:var(--gold);text-decoration:underline;text-underline-offset:3px">Обсудим на консультации &rarr;</a></p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ГАРАНТИИ
+     ═══════════════════════════════════ -->
+<section class="section bg-navy" id="guarantees">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Гарантии</span>
+            <h2 class="title">Работаем на результат — <span class="accent">отвечаем за качество</span></h2>
+            <p class="subtitle">Каждый пункт прописан в договоре. Не обещания — обязательства.</p>
+        </div>
+        <div class="guarantee-grid reveal">
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Гарантия замены</h4><p>Бесплатная замена моряка в первые 14 дней рейса, если кандидат не подошёл. Без вопросов и дополнительных платежей.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Оплата по факту</h4><p>Основная оплата за подбор — после посадки моряка на судно. Вы платите за результат, а не за процесс.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Проверенные кандидаты</h4><p>Каждый моряк проходит проверку документов, квалификации и рекомендаций с предыдущих рейсов. Не присылаем «кого попало».</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Официальный договор</h4><p>Работаем по договору с юридическим лицом. ИП зарегистрировано, ИНН и ОГРНИП в открытом доступе. Проверьте на nalog.ru.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Документы в реестрах</h4><p>Все сертификаты моряков проверяемы в государственных реестрах. Покажем, как проверить самостоятельно.</p></div></div>
+            <div class="g-item"><div class="g-check">&#10003;</div><div><h4>Единый партнёр для всех типов флота</h4><p>Рыбопромысловый, краболовный, танкерный, международный — один контакт, одни условия, одно качество.</p></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     КЕЙСЫ
+     ═══════════════════════════════════ -->
+<section class="section bg-dark" id="cases">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Кейсы</span>
+            <h2 class="title">Как мы решаем задачи <span class="accent">наших клиентов</span></h2>
+            <p class="subtitle">Реальные примеры работы с судоходными компаниями</p>
+        </div>
+        <div class="reviews-grid reveal">
+            <div class="review-card">
+                <div style="margin-bottom:16px"><span class="branch-badge badge-blue">Рыбопромысловый флот</span></div>
+                <p class="review-text">«Нужно было срочно закрыть 8 вакансий матросов на БМРТ за 2 недели до выхода в рейс. CrewPoint предоставили всех кандидатов за 12 дней — с полным пакетом документов, проверенных и готовых к посадке. Ни одной замены за весь рейс.»</p>
+                <div class="review-author">
+                    <div class="review-avatar review-avatar--blue">РК</div>
+                    <div>
+                        <div class="review-name">Рыбодобывающая компания</div>
+                        <div class="review-role">Владивосток &bull; 8 вакансий &bull; 12 дней</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div style="margin-bottom:16px"><span class="branch-badge badge-orange">Краболовный флот</span></div>
+                <p class="review-text">«Набор экипажа на путину — 15 человек, сроки горят. CrewPoint собрали полный экипаж за 10 дней, все с документами. Одна замена по гарантии в первую неделю — решена за 3 дня, без доплат. Работаем с ними уже второй сезон.»</p>
+                <div class="review-author">
+                    <div class="review-avatar review-avatar--orange">КК</div>
+                    <div>
+                        <div class="review-name">Крабодобывающая компания</div>
+                        <div class="review-role">Камчатка &bull; 15 человек &bull; 10 дней</div>
+                        <span class="review-badge rb-orange">Гарантия сработала</span>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div style="margin-bottom:16px"><span class="branch-badge badge-cyan">Танкерный флот</span></div>
+                <p class="review-text">«Нужен был постоянный партнёр для подбора вахтенных матросов на танкеры. За 6 месяцев CrewPoint закрыли больше 20 позиций. Все кандидаты с квалификацией, документы в порядке. Согласовали индивидуальный тариф — выгоднее, чем с предыдущим агентством.»</p>
+                <div class="review-author">
+                    <div class="review-avatar review-avatar--purple">СК</div>
+                    <div>
+                        <div class="review-name">Судоходная компания</div>
+                        <div class="review-role">Новороссийск &bull; 20+ моряков &bull; 6 мес</div>
+                        <span class="review-badge rb-purple">Постоянное партнёрство</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ФОРМА ЗАЯВКИ
+     ═══════════════════════════════════ -->
+<section class="section cta bg-navy" id="form">
+    <div class="container">
+        <div class="reveal text-center">
+            <span class="label">Заявка</span>
+            <h2 class="title">Оставьте заявку на подбор экипажа</h2>
+            <p class="cta-subtitle">Перезвоним в течение 2 часов в рабочее время. Обсудим задачу, предложим кандидатов.</p>
+        </div>
+        <div class="cta-form reveal" id="ctaFormOwners">
+            <div class="form-group"><input type="text" id="ownerCompany" placeholder="Название компании" required></div>
+            <div class="form-group"><input type="text" id="ownerContact" placeholder="Контактное лицо" required></div>
+            <div class="form-group"><input type="tel" id="ownerPhone" placeholder="Телефон" required></div>
+            <div class="form-group">
+                <select id="ownerFleet">
+                    <option value="" disabled selected>Тип флота</option>
+                    <option value="fishing">Рыбопромысловый</option>
+                    <option value="crab">Краболовный</option>
+                    <option value="tanker">Танкерный / перегрузчики</option>
+                    <option value="international">Международный</option>
+                    <option value="other">Другое</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select id="ownerCount">
+                    <option value="" disabled selected>Количество вакансий</option>
+                    <option value="1-2">1–2</option>
+                    <option value="3-5">3–5</option>
+                    <option value="6-10">6–10</option>
+                    <option value="10+">10+</option>
+                </select>
+            </div>
+            <div class="form-group"><textarea id="ownerComment" placeholder="Должности, сроки, особые требования"></textarea></div>
+            <button type="button" class="btn btn--gold btn--lg form-submit" id="formSubmitBtnOwners">Отправить заявку &rarr;</button>
+            <p class="form-note">Ваши данные конфиденциальны. Работаем по NDA при необходимости.</p>
+        </div>
+        <div class="form-success" id="formSuccessOwners"><div class="s-icon">&#10003;</div><h3>Заявка отправлена!</h3><p>Мы свяжемся с вами в течение 2 часов в рабочее время.</p></div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     ФИНАЛЬНЫЙ CTA
+     ═══════════════════════════════════ -->
+<section class="section section--sm bg-dark">
+    <div class="container">
+        <div class="reveal text-center">
+            <h2 class="title title--sm">Нужен экипаж? Напишите нам — <span class="accent">обсудим задачу</span></h2>
+            <p class="subtitle">Ответим в течение часа. Назовём сроки, стоимость и предложим кандидатов.</p>
+            <div class="cta-buttons">
+                <a href="https://wa.me/79952337540?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D0%BF%D0%BE%D0%B4%D0%B1%D0%BE%D1%80%20%D1%8D%D0%BA%D0%B8%D0%BF%D0%B0%D0%B6%D0%B0." target="_blank" class="btn btn--gold btn--lg">WhatsApp</a>
+                <a href="https://t.me/crewpoint" target="_blank" class="btn btn--outline btn--lg">Telegram</a>
+                <a href="tel:+79952337540" class="btn btn--outline btn--lg">Позвонить</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════ -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">
+                    <img src="assets/images/logo-anchor.png" alt="CrewPoint" class="logo-icon" width="52" height="52">
+                    <img src="assets/images/logo-text.png" alt="CrewPoint" class="logo-name" height="28">
+                </a>
+                <p>Карьерная платформа для морских специалистов. Документы, консалтинг, карьерный рост. Подбор экипажа для судовладельцев. 500+ моряков прошли через нас.</p>
+            </div>
+            <div><h4>Навигация</h4><ul><li><a href="index.html#how">Как это работает</a></li><li><a href="index.html#career">Карьерная карта</a></li><li><a href="index.html#pricing">Стоимость</a></li><li><a href="index.html#trust">Гарантии</a></li><li><a href="details.html#faq">Вопросы</a></li></ul></div>
+            <div><h4>Для бизнеса</h4><ul><li><a href="#advantages">Преимущества</a></li><li><a href="#services">Услуги</a></li><li><a href="#tariffs">Тарифы</a></li><li><a href="#guarantees">Гарантии</a></li><li><a href="#cases">Кейсы</a></li></ul></div>
+            <div><h4>Контакты</h4><ul><li><a href="tel:+79952337540">+7 (995) 233-75-40</a></li><li><a href="mailto:crewpoint_job@mail.ru">crewpoint_job@mail.ru</a></li><li><a href="#">Telegram</a></li><li><a href="#">WhatsApp</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><div>&copy; 2024–2025 CrewPoint. ИП Иванов И.И. ИНН: 000000000000. Консалтинговые услуги.</div><div class="footer-legal"><a href="#">Политика конфиденциальности</a><a href="#">Договор оферты</a></div></div>
+    </div>
+</footer>
+
+<!-- ═══════════════════════════════════
+     FLOATING ELEMENTS
+     ═══════════════════════════════════ -->
+<div class="float-cta" id="floatingCta"><a href="#form" class="btn btn--gold btn--sm">Оставить заявку</a></div>
+
+<div class="contact-trigger" id="contactTrigger">
+    <button class="contact-trigger-btn" id="openSheetBtn" aria-label="Открыть контакты">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Связаться
+        <span class="contact-trigger-dot"></span>
+    </button>
+</div>
+
+<!-- ═══════════════════════════════════
+     CONTACT BOTTOM SHEET
+     ═══════════════════════════════════ -->
+<div class="sheet-overlay" id="sheetOverlay"></div>
+<div class="sheet" id="sheet" role="dialog" aria-hidden="true" aria-label="Контакты для связи">
+    <div class="sheet-inner">
+        <div class="sheet-handle" id="sheetHandle"><div class="sheet-handle-bar"></div></div>
+        <div class="sheet-status"><span class="sheet-status-text"><span class="sheet-status-dot"></span>Доступны сейчас</span></div>
+        <div class="sheet-messengers">
+            <a href="https://wa.me/79952337540?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D0%BF%D0%BE%D0%B4%D0%B1%D0%BE%D1%80%20%D1%8D%D0%BA%D0%B8%D0%BF%D0%B0%D0%B6%D0%B0." target="_blank" class="sheet-msg-card">
+                <div class="sheet-msg-icon sheet-msg-icon--wa"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+                <div><div class="sheet-msg-name">WhatsApp</div><div class="sheet-msg-sub">Ответим за 5 минут</div></div>
+            </a>
+            <a href="https://t.me/crewpoint" target="_blank" class="sheet-msg-card">
+                <div class="sheet-msg-icon sheet-msg-icon--tg"><svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
+                <div><div class="sheet-msg-name">Telegram</div><div class="sheet-msg-sub">Удобно и быстро</div></div>
+            </a>
+            <a href="https://max.ru/u/f9LHodD0cOJeIKX2m40lFniNncHoe2YnM5X0vp9SjCywQC83svNUXjvTlmYt" target="_blank" class="sheet-msg-card">
+                <div class="sheet-msg-icon sheet-msg-icon--max"><img src="https://maxicons.ru/icons/Max_logo.svg" alt="Max" width="22" height="22"></div>
+                <div><div class="sheet-msg-name">Max</div><div class="sheet-msg-sub">Российский мессенджер</div></div>
+            </a>
+        </div>
+        <div class="sheet-util">
+            <button class="sheet-util-btn sheet-util-phone" data-copy="+79952337540" data-toast="Телефон скопирован" title="Скопировать телефон">
+                <div class="sheet-util-icon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+            </button>
+            <button class="sheet-util-btn sheet-util-email" data-copy="crewpoint_job@mail.ru" data-toast="Почта скопирована">
+                <div class="sheet-util-icon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg></div>
+                <div class="sheet-util-text"><div class="sheet-util-label">Почта агентства</div><div class="sheet-util-value">crewpoint_job@mail.ru</div></div>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="sheet-toast" id="sheetToast"></div>
+
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>

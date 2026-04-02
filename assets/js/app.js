@@ -22,6 +22,7 @@ var MONTHS_GEN = ['января','февраля','марта','апреля','�
 // ── Cached DOM ──
 var header         = $('#header');
 var floatingCta    = $('#floatingCta');
+var floatingB2B    = $('#floatingB2B');
 var contactTrigger = $('#contactTrigger');
 var mobileMenu     = $('#mobileMenu');
 var sheet          = $('#sheet');
@@ -42,6 +43,7 @@ window.addEventListener('scroll', function() {
         if (header)         header.classList.toggle('scrolled', y > 80);
         if (floatingCta)    floatingCta.classList.toggle('visible', y > 600);
         if (contactTrigger) contactTrigger.classList.toggle('visible', y > 400);
+        if (floatingB2B)    floatingB2B.classList.toggle('hidden', y > 500);
         ticking = false;
     });
 });
@@ -666,6 +668,435 @@ $$('.sheet-util-btn[data-copy]').forEach(function(btn) {
     }
 })();
 
+// ══════════════════════════════════════
+// CURSOR GLOW
+// ══════════════════════════════════════
+function initGlow() {
+    var isTouch = 'ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches;
+    if (isTouch) return;
+
+    var cards = $$('.p-card, .branch, .g-item, .review-card');
+    if (!cards.length) return;
+
+    cards.forEach(function(card) {
+        var pos = getComputedStyle(card).position;
+        if (pos === 'static') card.style.position = 'relative';
+
+        card.classList.add('glow-card');
+
+        var glow = document.createElement('div');
+        glow.className = 'glow-effect';
+        card.appendChild(glow);
+
+        card.addEventListener('mousemove', (function() {
+            var pending = false;
+            return function(e) {
+                if (pending) return;
+                pending = true;
+                requestAnimationFrame(function() {
+                    var rect = card.getBoundingClientRect();
+                    card.style.setProperty('--glow-x', (e.clientX - rect.left) + 'px');
+                    card.style.setProperty('--glow-y', (e.clientY - rect.top) + 'px');
+                    pending = false;
+                });
+            };
+        })());
+    });
+}
+
+
+// ══════════════════════════════════════
+// COUNTER ANIMATION
+// ══════════════════════════════════════
+function initCounters() {
+    var stats = $$('.hero-stats .stat-value');
+    if (!stats.length || !('IntersectionObserver' in window)) return;
+
+    var targets = [];
+    stats.forEach(function(el) {
+        var text = el.textContent.trim();
+        var suffix = '';
+        var value = 0;
+        var isFloat = false;
+
+        if (text.indexOf('+') !== -1) {
+            suffix = '+';
+            value = parseInt(text.replace(/[^0-9]/g, ''), 10);
+        } else if (text.indexOf('.') !== -1) {
+            isFloat = true;
+            value = parseFloat(text);
+        } else {
+            value = parseInt(text, 10);
+        }
+
+        if (!isNaN(value)) {
+            targets.push({ el: el, value: value, suffix: suffix, isFloat: isFloat });
+        }
+    });
+
+    if (!targets.length) return;
+
+    var container = $('.hero-stats');
+    if (!container) return;
+
+    var fired = false;
+    var obs = new IntersectionObserver(function(entries) {
+        if (fired) return;
+        entries.forEach(function(en) {
+            if (en.isIntersecting) {
+                fired = true;
+                obs.disconnect();
+                targets.forEach(function(t, i) {
+                    t.el.textContent = t.isFloat ? '0.0' : '0' + t.suffix;
+                    setTimeout(function() { countUp(t); }, i * 200);
+                });
+            }
+        });
+    }, { threshold: 0.3 });
+
+    obs.observe(container);
+}
+
+function countUp(t) {
+    var duration = 1800;
+    var startTime = performance.now();
+
+    function tick(now) {
+        var elapsed = now - startTime;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        var current;
+
+        if (t.isFloat) {
+            current = (eased * t.value).toFixed(1);
+        } else {
+            current = Math.floor(eased * t.value);
+        }
+
+        t.el.textContent = current + t.suffix;
+
+        if (progress < 1) {
+            requestAnimationFrame(tick);
+        } else {
+            t.el.textContent = (t.isFloat ? t.value.toFixed(1) : t.value) + t.suffix;
+            t.el.classList.add('counted');
+        }
+    }
+
+    requestAnimationFrame(tick);
+}
+
+// ══════════════════════════════════════
+// AMBIENT BLOBS + GLASS + MESH (FinTech)
+// ══════════════════════════════════════
+function initAmbientBlobs() {
+    var isTouch = 'ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches;
+    var isMobile = window.innerWidth <= 768;
+    if (isTouch || isMobile) return;
+
+    // ── Блобы по секциям ──
+    var configs = [
+        {
+            selector: '#career',
+            mesh: 'mesh-bg--career',
+            blobs: [
+                { color: 'blue',   drift: '2', top: '15%', left: '65%' },
+                { color: 'purple', drift: '3', top: '65%', left: '5%' },
+                { color: 'blue',   drift: '4', top: '40%', left: '85%', sm: true }
+            ]
+        },
+        {
+            selector: '#pricing',
+            mesh: 'mesh-bg--pricing',
+            blobs: [
+                { color: 'gold',   drift: '1', top: '20%', left: '75%' },
+                { color: 'blue',   drift: '3', top: '70%', left: '10%' },
+                { color: 'gold',   drift: '4', top: '50%', left: '50%', sm: true }
+            ]
+        },
+        {
+            selector: '#trust',
+            mesh: 'mesh-bg--trust',
+            blobs: [
+                { color: 'green',  drift: '2', top: '10%', left: '20%' },
+                { color: 'blue',   drift: '1', top: '60%', left: '75%' }
+            ]
+        },
+        {
+            selector: '#reviews',
+            mesh: 'mesh-bg--reviews',
+            blobs: [
+                { color: 'gold',   drift: '3', top: '25%', left: '60%' },
+                { color: 'purple', drift: '4', top: '70%', left: '15%', sm: true }
+            ]
+        },
+        {
+            selector: '#career-paths',
+            blobs: [
+                { color: 'blue',   drift: '1', top: '15%', left: '60%' },
+                { color: 'purple', drift: '3', top: '70%', left: '20%' }
+            ]
+        },
+        {
+            selector: '#path-comfort',
+            blobs: [
+                { color: 'blue',   drift: '2', top: '25%', left: '70%' },
+                { color: 'blue',   drift: '4', top: '60%', left: '15%', sm: true }
+            ]
+        },
+        {
+            selector: '#path-capital',
+            blobs: [
+                { color: 'orange', drift: '3', top: '20%', left: '10%' },
+                { color: 'orange', drift: '1', top: '65%', left: '75%', sm: true }
+            ]
+        },
+        {
+            selector: '#path-global',
+            blobs: [
+                { color: 'cyan',   drift: '1', top: '15%', left: '65%' },
+                { color: 'cyan',   drift: '4', top: '60%', left: '20%', sm: true }
+            ]
+        },
+        {
+            selector: '#calc',
+            blobs: [
+                { color: 'gold',   drift: '2', top: '30%', left: '75%' },
+                { color: 'blue',   drift: '3', top: '60%', left: '10%', sm: true }
+            ]
+        },
+        {
+            selector: '#faq',
+            blobs: [
+                { color: 'purple', drift: '4', top: '20%', left: '70%', sm: true },
+                { color: 'gold',   drift: '1', top: '60%', left: '15%', sm: true }
+            ]
+        }
+    ];
+
+    // Находим CTA-секции
+    var ctaSections = $$('.cta');
+    if (ctaSections.length) {
+        ctaSections.forEach(function(section) {
+            configs.push({
+                el: section,
+                mesh: 'mesh-bg--cta',
+                blobs: [
+                    { color: 'gold', drift: '2', top: '30%', left: '50%' },
+                    { color: 'gold', drift: '4', top: '60%', left: '30%', sm: true }
+                ]
+            });
+        });
+    }
+
+    // Находим секцию "Знакомо?" (problems)
+    var problemsSections = $$('.bg-navy');
+    if (problemsSections.length && problemsSections[0]) {
+        configs.push({
+            el: problemsSections[0],
+            mesh: 'mesh-bg--hero-problems',
+            blobs: [
+                { color: 'blue', drift: '3', top: '30%', left: '70%', sm: true }
+            ]
+        });
+    }
+
+    // ── Создаём блобы ──
+    configs.forEach(function(config) {
+        var section = config.el || $(config.selector);
+        if (!section) return;
+
+        section.classList.add('has-ambient');
+
+        if (config.mesh) {
+            section.classList.add(config.mesh);
+        }
+
+        var wrap = document.createElement('div');
+        wrap.className = 'ambient-wrap';
+
+        config.blobs.forEach(function(b) {
+            var blob = document.createElement('div');
+            var classes = 'ambient-blob ambient-blob--' + b.color + ' ambient-blob--drift-' + b.drift;
+            if (b.sm) classes += ' ambient-blob--sm';
+            blob.className = classes;
+            blob.style.top = b.top;
+            blob.style.left = b.left;
+            wrap.appendChild(blob);
+        });
+
+        section.insertBefore(wrap, section.firstChild);
+    });
+
+    // ── Glass-эффект на карточки ──
+    var glassTargets = [
+        '.hero-card',
+        '.p-card',
+        '.branch',
+        '.g-item',
+        '.review-card'
+    ];
+
+    glassTargets.forEach(function(sel) {
+        $$(sel).forEach(function(card) {
+            card.classList.add('glass-card');
+        });
+    });
+}
+
+
+// ══════════════════════════════════════
+// 3D TILT
+// ══════════════════════════════════════
+function initTilt() {
+    var isTouch = 'ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches;
+    if (isTouch) return;
+
+    var cards = $$('.branch, .p-card');
+    if (!cards.length) return;
+
+    cards.forEach(function(card) {
+        card.classList.add('tilt-card');
+
+        card.addEventListener('mousemove', (function() {
+            var pending = false;
+            return function(e) {
+                if (pending) return;
+                pending = true;
+                requestAnimationFrame(function() {
+                    var rect = card.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
+                    var centerX = rect.width / 2;
+                    var centerY = rect.height / 2;
+
+                    var max = parseFloat(getComputedStyle(card).getPropertyValue('--tilt-max')) || 5;
+
+                    var rotateX = ((centerY - y) / centerY) * max;
+                    var rotateY = ((x - centerX) / centerX) * max;
+
+                    card.classList.remove('tilt-reset');
+                    card.style.setProperty('--tilt-x', rotateX.toFixed(2) + 'deg');
+                    card.style.setProperty('--tilt-y', rotateY.toFixed(2) + 'deg');
+
+                    pending = false;
+                });
+            };
+        })());
+
+        card.addEventListener('mouseleave', function() {
+            card.classList.add('tilt-reset');
+            card.style.setProperty('--tilt-x', '0deg');
+            card.style.setProperty('--tilt-y', '0deg');
+        });
+    });
+}
+
+
+// ══════════════════════════════════════
+// ACTIVE NAV HIGHLIGHT
+// ══════════════════════════════════════
+function initNavHighlight() {
+    var navLinks = $$('.nav a:not(.btn)');
+    if (!navLinks.length || !('IntersectionObserver' in window)) return;
+
+    var sectionMap = [];
+
+    navLinks.forEach(function(link) {
+        var href = link.getAttribute('href');
+        if (!href) return;
+
+        var hash = href.indexOf('#') !== -1 ? href.substring(href.indexOf('#')) : null;
+        if (!hash) return;
+
+        var section = $(hash);
+        if (section) {
+            sectionMap.push({ link: link, section: section });
+        }
+    });
+
+    if (!sectionMap.length) return;
+
+    var currentActive = null;
+
+    var observer = new IntersectionObserver(function(entries) {
+        var visible = [];
+
+        entries.forEach(function(entry) {
+            var match = null;
+            for (var i = 0; i < sectionMap.length; i++) {
+                if (sectionMap[i].section === entry.target) {
+                    match = sectionMap[i];
+                    break;
+                }
+            }
+            if (match) {
+                match._ratio = entry.intersectionRatio;
+                match._intersecting = entry.isIntersecting;
+            }
+        });
+
+        var best = null;
+        var bestRatio = 0;
+
+        sectionMap.forEach(function(item) {
+            if (item._intersecting && item._ratio > bestRatio) {
+                bestRatio = item._ratio;
+                best = item;
+            }
+        });
+
+        if (best && best.link !== currentActive) {
+            navLinks.forEach(function(l) { l.classList.remove('nav-active'); });
+            best.link.classList.add('nav-active');
+            currentActive = best.link;
+        }
+    }, {
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+        rootMargin: '-80px 0px -30% 0px'
+    });
+
+    sectionMap.forEach(function(item) {
+        item._ratio = 0;
+        item._intersecting = false;
+        observer.observe(item.section);
+    });
+}
+
+
+// ══════════════════════════════════════
+// HOVER RIPPLE
+// ══════════════════════════════════════
+function initRipple() {
+    var isTouch = 'ontouchstart' in window && !window.matchMedia('(pointer: fine)').matches;
+    if (isTouch) return;
+
+    document.addEventListener('mousedown', function(e) {
+        var btn = e.target.closest('.btn');
+        if (!btn) return;
+
+        var existing = $$('.btn-ripple', btn);
+        existing.forEach(function(r) { r.remove(); });
+
+        var rect = btn.getBoundingClientRect();
+        var size = Math.max(rect.width, rect.height) * 2;
+        var x = e.clientX - rect.left - size / 2;
+        var y = e.clientY - rect.top - size / 2;
+
+        var ripple = document.createElement('div');
+        ripple.className = 'btn-ripple';
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+
+        btn.appendChild(ripple);
+
+        setTimeout(function() {
+            ripple.remove();
+        }, 800);
+    });
+}
 
 // ══════════════════════════════════════
 // INIT
@@ -675,6 +1106,12 @@ function init() {
     renderCohorts();
     renderSeasonTimer();
     calculateFromChips();
+    initGlow();
+    initCounters();
+    initAmbientBlobs();    // ← добавить
+    initTilt();            // ← добавить
+    initNavHighlight();    // ← добавить
+    initRipple();          // ← добавить
     setInterval(renderSeasonTimer, 60000);
 }
 
