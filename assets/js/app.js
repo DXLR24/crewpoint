@@ -72,7 +72,10 @@ function toggleMenu() {
     mobileMenu.classList.toggle('active');
     var isOpen = mobileMenu.classList.contains('active');
     document.body.style.overflow = isOpen ? 'hidden' : '';
+
+    // Бургер анимируется в X и обратно
     if (burgerBtn) {
+        burgerBtn.classList.toggle('active', isOpen);
         burgerBtn.setAttribute('aria-expanded', isOpen);
         burgerBtn.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'Открыть меню');
     }
