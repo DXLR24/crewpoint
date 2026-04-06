@@ -27,6 +27,8 @@ var contactTrigger = $('#contactTrigger');
 var mobileMenu     = $('#mobileMenu');
 var sheet          = $('#sheet');
 var sheetOverlay   = $('#sheetOverlay');
+var stickyBar      = $('#stickyBar');
+var formSection    = $('#form');
 
 // ── State ──
 var ticking = false;
@@ -44,6 +46,19 @@ window.addEventListener('scroll', function() {
         if (floatingCta)    floatingCta.classList.toggle('visible', y > 600);
         if (contactTrigger) contactTrigger.classList.toggle('visible', y > 400);
         if (floatingB2B)    floatingB2B.classList.toggle('hidden', y > 500);
+
+        // Sticky bar — показываем после 400px, прячем когда форма видна
+        if (stickyBar) {
+            var show = y > 400;
+            if (show && formSection) {
+                var rect = formSection.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    show = false;
+                }
+            }
+            stickyBar.classList.toggle('visible', show);
+        }
+
         ticking = false;
     });
 });
@@ -67,6 +82,9 @@ var burgerBtn   = $('#burgerBtn');
 var mobileClose = $('#mobileClose');
 if (burgerBtn)   burgerBtn.addEventListener('click', toggleMenu);
 if (mobileClose) mobileClose.addEventListener('click', toggleMenu);
+// Кнопка «Связаться» в sticky bar открывает ту же шторку
+var stickyContactBtn = $('#stickyContact');
+if (stickyContactBtn) stickyContactBtn.addEventListener('click', openSheet);
 
 if (mobileMenu) {
     $$('a', mobileMenu).forEach(function(link) {
@@ -378,19 +396,27 @@ if (formSubmitBtn) {
 
 $$('#ctaForm input').forEach(function(input) {
     input.addEventListener('focus', function() { input.style.borderColor = 'var(--border-subtle)'; });
+    input.addEventListener('input', function() { input.style.borderColor = 'var(--border-subtle)'; });
 });
 
 function applyPhoneMask(el) {
     if (!el) return;
-    el.addEventListener('input', function(e) {
+    function formatPhone(e) {
         var v = e.target.value.replace(/\D/g, '');
-        if (!v.length || (v[0] !== '7' && v[0] !== '8')) return;
+        if (!v.length) return;
+        // принимаем и 7, и 8, и вставку без кода
+        if (v[0] === '8') v = '7' + v.substring(1);
+        if (v[0] !== '7') v = '7' + v;
         var f = '+7';
         if (v.length > 1)  f += ' (' + v.substring(1, 4);
         if (v.length > 4)  f += ') ' + v.substring(4, 7);
         if (v.length > 7)  f += '-' + v.substring(7, 9);
         if (v.length > 9)  f += '-' + v.substring(9, 11);
         e.target.value = f;
+    }
+    el.addEventListener('input', formatPhone);
+    el.addEventListener('paste', function(e) {
+        setTimeout(function() { el.dispatchEvent(new Event('input')); }, 0);
     });
 }
 applyPhoneMask($('#formPhone'));
@@ -1099,10 +1125,75 @@ function initRipple() {
 }
 
 // ══════════════════════════════════════
+// DYNAMIC ONLINE STATUS
+// ══════════════════════════════════════
+function initOnlineStatus() {
+    var statusDot  = $('.sheet-status-dot');
+    var statusText = $('.sheet-status-text');
+    if (!statusDot || !statusText) return;
+
+    // Рабочие часы: пн-пт 9:00–20:00, сб 10:00–18:00
+    var now    = new Date();
+    var hour   = now.getHours();
+    var minute = now.getMinutes();
+    var day    = now.getDay(); // 0=вс, 6=сб
+
+    var isWeekday  = day >= 1 && day <= 5;
+    var isSaturday = day === 6;
+    var isSunday   = day === 0;
+
+    var online = false;
+    var message = '';
+
+    if (isWeekday && hour >= 9 && hour < 20) {
+        online = true;
+        if (hour < 12) {
+            message = 'Онлайн · Ответим за 5–10 минут';
+        } else if (hour < 17) {
+            message = 'Онлайн · Ответим за 5 минут';
+        } else {
+            message = 'Онлайн · Ответим до конца дня';
+        }
+    } else if (isSaturday && hour >= 10 && hour < 18) {
+        online = true;
+        message = 'Онлайн · Работаем в субботу';
+    } else {
+        online = false;
+        // Считаем когда следующий онлайн
+        if (isSunday || (isSaturday && hour >= 18)) {
+            message = 'Офлайн · Ответим в понедельник в 9:00';
+        } else if (isWeekday && hour < 9) {
+            message = 'Офлайн · Ответим сегодня в 9:00';
+        } else if (isWeekday && hour >= 20) {
+            var nextDay = day === 5 ? 'в понедельник' : 'завтра';
+            message = 'Офлайн · Ответим ' + nextDay + ' в 9:00';
+        } else {
+            message = 'Офлайн · Скоро будем онлайн';
+        }
+    }
+
+    // Обновляем точку
+    statusDot.style.background = online ? 'var(--green)' : 'var(--text-muted)';
+    statusDot.style.animationPlayState = online ? 'running' : 'paused';
+
+    // Обновляем текст (сохраняем точку внутри span)
+    statusText.innerHTML =
+        '<span class="sheet-status-dot" style="background:' +
+        (online ? 'var(--green)' : 'var(--text-muted)') +
+        ';animation-play-state:' + (online ? 'running' : 'paused') +
+        '"></span>' + message;
+}
+// ══════════════════════════════════════
+// CALC CTA → SHEET
+// ══════════════════════════════════════
+var calcCtaSheet = $('#calcCtaSheet');
+if (calcCtaSheet) calcCtaSheet.addEventListener('click', openSheet);
+// ══════════════════════════════════════
 // INIT
 // ══════════════════════════════════════
 function init() {
     initReveal();
+    initOnlineStatus();
     renderCohorts();
     renderSeasonTimer();
     calculateFromChips();
@@ -1112,7 +1203,12 @@ function init() {
     initTilt();            // ← добавить
     initNavHighlight();    // ← добавить
     initRipple();          // ← добавить
-    setInterval(renderSeasonTimer, 60000);
+    // Обновляем только цифры, не весь блок
+setInterval(function() {
+    var box = $('#seasonBox');
+    if (!box) return;
+    renderSeasonTimer();
+}, 60000);
 }
 
 if (document.readyState === 'loading') {
