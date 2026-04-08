@@ -98,22 +98,36 @@ function updateRoiGauge(percent){var clamped=Math.min(Math.max(percent,0),1000),
 // ══════════════════════════════════════
 
 var FORM_PROXY_URL='https://crewpoint-form.pubgdix.workers.dev';
+
+function showFormError(){
+    var form=$('#ctaForm');if(!form)return;
+    var existing=$('#formError');if(existing){existing.style.display='block';return;}
+    var errorEl=document.createElement('div');
+    errorEl.id='formError';
+    errorEl.style.cssText='margin-top:16px;padding:20px 24px;background:rgba(229,83,75,0.06);border:1px solid rgba(229,83,75,0.2);border-radius:12px;text-align:center';
+    errorEl.innerHTML='<p style="font-size:.9rem;color:var(--red);font-weight:600;margin-bottom:12px">⚠ Не удалось отправить заявку — проблемы с сетью</p><p style="font-size:.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:16px">Напишите нам напрямую — ответим за 5 минут:</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><a href="https://wa.me/79952337540" target="_blank" rel="noopener noreferrer" style="padding:12px 20px;background:#25D366;color:#fff;border-radius:8px;font-weight:600;font-size:.85rem;text-decoration:none">📱 WhatsApp</a><a href="https://t.me/crewpoint" target="_blank" rel="noopener noreferrer" style="padding:12px 20px;background:#2AABEE;color:#fff;border-radius:8px;font-weight:600;font-size:.85rem;text-decoration:none">✈ Telegram</a><a href="tel:+79952337540" style="padding:12px 20px;background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-weight:600;font-size:.85rem;text-decoration:none">📞 +7 (995) 233-75-40</a></div>';
+    form.appendChild(errorEl);
+}
+
 var formSubmitBtn=$('#formSubmitBtn');
 if(formSubmitBtn){
     formSubmitBtn.addEventListener('click',function(){
         var name=$('#formName'),phone=$('#formPhone'),pkg=$('#formPackage'),city=$('#formCity');
         if(!name.value.trim()){name.style.borderColor='var(--red)';name.focus();return;}
-        if(!phone.value.trim()||phone.value.length<7){phone.style.borderColor='var(--red)';phone.focus();return;}
+        var cleanPhone=phone.value.replace(/\D/g,'');
+        if(cleanPhone.length!==11){phone.style.borderColor='var(--red)';phone.focus();return;}
         formSubmitBtn.disabled=true;formSubmitBtn.textContent='Отправка...';
         var packageNames={'docs':'Сопровождение (Документы) — 55 000 ₽','start':'Старт карьеры — 120 000 ₽','pro':'Карьера PRO — 240 000 ₽','upgrade':'Повышение до вахтенного — 120 000 ₽','crab':'Краболовный флот — 150 000 ₽','global':'Международный флот (под флагом)','unsure':'Пока не определился'};
         var now=new Date(),time=now.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),page=window.location.pathname.includes('details')?'details.html':'index.html';
         fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value.trim(),phone:phone.value.trim(),package:packageNames[pkg.value]||'Не выбран',city:city.value.trim()||'Не указан',page:page,time:time})})
-        .then(function(response){if(response.ok){$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');}else throw new Error('Server error');})
+        .then(function(response){
+            if(response.ok){$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');}
+            else throw new Error('Server error '+response.status);
+        })
         .catch(function(error){
-            console.error('Form send error:',error);$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');
-            var leads=JSON.parse(localStorage.getItem('crewpoint_leads')||'[]');
-            leads.push({name:name.value.trim(),phone:phone.value.trim(),package:pkg.value,city:city.value.trim(),time:new Date().toISOString(),page:page});
-            localStorage.setItem('crewpoint_leads',JSON.stringify(leads));
+            console.error('Form send error:',error);
+            formSubmitBtn.disabled=false;formSubmitBtn.textContent='Получить консультацию →';
+            showFormError();
         });
     });
 }
