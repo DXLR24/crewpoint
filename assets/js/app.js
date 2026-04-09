@@ -321,8 +321,62 @@ var calcCtaSheet=$('#calcCtaSheet');if(calcCtaSheet)calcCtaSheet.addEventListene
 // INIT
 // ══════════════════════════════════════
 
-function init(){initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
+function init(){applyConfig();initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){$$('.reveal').forEach(function(e){if(!e.classList.contains('visible'))e.classList.add('visible');});});
+
+// ══════════════════════════════════════
+// APPLY CONFIG — подставляет контакты из config.js
+// ══════════════════════════════════════
+function applyConfig(){
+    var c=window.CREWPOINT;if(!c)return;
+
+    // Телефоны — ссылки href
+    $$('a[href^="tel:"]').forEach(function(el){
+        el.href='tel:'+c.phone;
+        if(el.textContent.trim().startsWith('+'))el.textContent=c.phoneDisplay;
+    });
+
+    // Email — ссылки href
+    $$('a[href^="mailto:"]').forEach(function(el){
+        el.href='mailto:'+c.email;
+        if(el.textContent.includes('@'))el.textContent=c.email;
+    });
+
+    // WhatsApp
+    $$('a[href*="wa.me"]').forEach(function(el){
+        var hasText=el.href.includes('text=');
+        el.href=hasText?c.waText:c.wa;
+    });
+
+    // Telegram crewpoint
+    $$('a[href*="t.me/crewpoint"]').forEach(function(el){
+        el.href=c.tg;
+    });
+
+    // Telegram owner
+    $$('a[href*="t.me/DXBiller"]').forEach(function(el){
+        el.href=c.tgOwner;
+    });
+
+    // Футер — ИНН и название компании
+    $$('.footer-bottom div:first-child').forEach(function(el){
+        if(el.textContent.includes('ИП')){
+            el.textContent='© 2024–2025 CrewPoint. '+c.companyName+' ИНН: '+c.inn+'. Консалтинговые услуги.';
+        }
+    });
+
+    // sheet-util — email текст
+    $$('.sheet-util-value').forEach(function(el){
+        if(el.textContent.includes('@'))el.textContent=c.email;
+    });
+
+    // data-copy для кнопок копирования
+    $$('[data-copy]').forEach(function(el){
+        var val=el.dataset.copy;
+        if(val&&val.includes('@'))el.dataset.copy=c.email;
+        if(val&&val.startsWith('+'))el.dataset.copy=c.phone;
+    });
+}
 
 })();
