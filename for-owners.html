@@ -473,33 +473,10 @@
      ═══════════════════════════════════ -->
 <div class="sticky-bar" id="stickyBar"><button class="btn btn--outline" id="stickyContact">Связаться</button><a href="https://t.me/DXBiller" target="_blank" rel="noopener noreferrer" class="btn btn--tg">Написать в Telegram</a></div>
 
-<script src="assets/js/app.js"></script>
-<script>
-/* ═══════════════════════════════════
-   FOR-OWNERS PAGE JS
-   ═══════════════════════════════════ */
-
-(function(){
-  let fleetSelect=document.getElementById('calcFleet'),daysRange=document.getElementById('calcDays'),daysDisplay=document.getElementById('calcDaysDisplay'),lossEl=document.getElementById('calcLoss'),costEl=document.getElementById('calcCost'),saveEl=document.getElementById('calcSave'),ourDaysEl=document.getElementById('calcOurDays'),saveInline=document.getElementById('calcSaveInline'),costInline=document.getElementById('calcCostInline');
-  const costMap={100000:20000,150000:30000,200000:40000,300000:40000};
-  const fmt=n=>n>=1000000?(n/1000000).toFixed(1).replace('.',',')+' млн ₽':n.toLocaleString('ru-RU')+' ₽';
-  const update=()=>{
-    let dailyLoss=parseInt(fleetSelect.value,10),days=parseInt(daysRange.value,10),ourDays=12,serviceCost=costMap[dailyLoss]||40000,totalLoss=dailyLoss*days,ourLoss=dailyLoss*ourDays,saved=totalLoss-ourLoss-serviceCost;
-    daysDisplay.textContent=days+' '+(days===1?'день':days<5?'дня':'дней');
-    lossEl.textContent=fmt(totalLoss); costEl.textContent='от '+fmt(serviceCost); saveEl.textContent=saved>0?fmt(saved):'0 ₽';
-    if(ourDaysEl)ourDaysEl.textContent=ourDays+' дней';
-    if(saveInline)saveInline.textContent=saved>0?fmt(saved):'0 ₽';
-    if(costInline)costInline.textContent='от '+fmt(serviceCost);
-  };
-  if(fleetSelect&&daysRange){fleetSelect.addEventListener('change',update);daysRange.addEventListener('input',update);update();}
-})();
-
-(function(){
-  let steps=document.querySelectorAll('.tl-step');
-  if(!steps.length||!('IntersectionObserver' in window))return;
-  let obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target);}});},{threshold:0.3});
-  steps.forEach(s=>obs.observe(s));
-})();
-</script>
+<!-- ═══════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════ -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js" defer></script>
 </body>
 </html>

@@ -318,6 +318,36 @@ function initOnlineStatus(){
 var calcCtaSheet=$('#calcCtaSheet');if(calcCtaSheet)calcCtaSheet.addEventListener('click',openSheet);
 
 // ══════════════════════════════════════
+// FOR-OWNERS: CALCULATOR
+// ══════════════════════════════════════
+
+(function(){
+  var fleetSelect=$('#calcFleet'),daysRange=$('#calcDays'),daysDisplay=$('#calcDaysDisplay'),lossEl=$('#calcLoss'),costEl=$('#calcCost'),saveEl=$('#calcSave'),ourDaysEl=$('#calcOurDays'),saveInline=$('#calcSaveInline'),costInline=$('#calcCostInline');
+  var costMap={100000:20000,150000:30000,200000:40000,300000:40000};
+  var fmt=function(n){return n>=1000000?(n/1000000).toFixed(1).replace('.',',')+' млн ₽':n.toLocaleString('ru-RU')+' ₽';};
+  var update=function(){
+    var dailyLoss=parseInt(fleetSelect.value,10),days=parseInt(daysRange.value,10),ourDays=12,serviceCost=costMap[dailyLoss]||40000,totalLoss=dailyLoss*days,ourLoss=dailyLoss*ourDays,saved=totalLoss-ourLoss-serviceCost;
+    daysDisplay.textContent=days+' '+(days===1?'день':days<5?'дня':'дней');
+    lossEl.textContent=fmt(totalLoss); costEl.textContent='от '+fmt(serviceCost); saveEl.textContent=saved>0?fmt(saved):'0 ₽';
+    if(ourDaysEl)ourDaysEl.textContent=ourDays+' дней';
+    if(saveInline)saveInline.textContent=saved>0?fmt(saved):'0 ₽';
+    if(costInline)costInline.textContent='от '+fmt(serviceCost);
+  };
+  if(fleetSelect&&daysRange){fleetSelect.addEventListener('change',update);daysRange.addEventListener('input',update);update();}
+})();
+
+// ══════════════════════════════════════
+// FOR-OWNERS: TIMELINE REVEAL
+// ══════════════════════════════════════
+
+(function(){
+  var steps=$$('.tl-step');
+  if(!steps.length||!('IntersectionObserver' in window))return;
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(x){if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target);}});},{threshold:0.3});
+  steps.forEach(function(s){obs.observe(s);});
+})();
+
+// ══════════════════════════════════════
 // INIT
 // ══════════════════════════════════════
 
