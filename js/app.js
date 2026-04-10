@@ -40,7 +40,7 @@ var header=$('#header'),floatingCta=$('#floatingCta'),floatingB2B=$('#floatingB2
 // ── State ──
 
 var ticking=false;
-var FORM_PROXY_URL = 'https://script.google.com/macros/s/AKfycbz2jSp_AhcHwF9BUW-AefvEO7ymq1ZnDyTsxckNL1tPghf0qAwnvApt7hFLSJCKKDKhIw/exec';
+var FORM_PROXY_URL = 'https://crewpoint-form.pubgdix.workers.dev';
 
 // ══════════════════════════════════════
 // SCROLL LOCK (ПРЕДОТВРАЩЕНИЕ СДВИГА МАКЕТА)
@@ -118,7 +118,7 @@ function updateRoiGauge(percent){var clamped=Math.min(Math.max(percent,0),1000),
 // FORM → TELEGRAM (через Cloudflare Worker)
 // ══════════════════════════════════════
 
-var FORM_PROXY_URL='https://script.google.com/macros/s/AKfycbz2jSp_AhcHwF9BUW-AefvEO7ymq1ZnDyTsxckNL1tPghf0qAwnvApt7hFLSJCKKDKhIw/exec';
+var FORM_PROXY_URL='https://crewpoint-form.pubgdix.workers.dev';
 
 function showFormError(){
     var form=$('#ctaForm');if(!form)return;
@@ -235,26 +235,33 @@ if(formSubmitBtn){
         params.append('page',    page);
         params.append('time',    time);
 
-        // Отправка — no-cors, не ждём response.ok (он всегда false в no-cors)
-        fetch(FORM_PROXY_URL,{
-            method:'POST',
-            mode:'no-cors',
-            body:params
-            // Content-Type НЕ указываем — браузер сам поставит
-            // application/x-www-form-urlencoded, что и нужно
-        })
-        .then(function(){
-            // В no-cors .then срабатывает после завершения запроса
-            // response.ok проверять нельзя — всегда false
-            $('#ctaForm').style.display='none';
-            $('#formSuccess').classList.add('show');
-        })
-        .catch(function(error){
-            console.error('Form send error:',error);
-            formSubmitBtn.disabled=false;
-            formSubmitBtn.textContent='Получить консультацию →';
-            showFormError();
-        });
+// ВЕРНИ ЭТО — для Cloudflare Worker
+fetch(FORM_PROXY_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+        name:sanitizeInput(name.value.trim()),
+        phone:phone.value.trim(),
+        package:packageNames[pkg.value]||'Не выбран',
+        city:sanitizeInput(city.value.trim()||'Не указан'),
+        page:page,
+        time:time
+    })
+})
+.then(function(response){
+    if(response.ok){
+        $('#ctaForm').style.display='none';
+        $('#formSuccess').classList.add('show');
+    } else {
+        throw new Error('Server error '+response.status);
+    }
+})
+.catch(function(error){
+    console.error('Form send error:',error);
+    formSubmitBtn.disabled=false;
+    formSubmitBtn.textContent='Получить консультацию →';
+    showFormError();
+});
 
     }); // конец addEventListener
 } // конец if(formSubmitBtn)
