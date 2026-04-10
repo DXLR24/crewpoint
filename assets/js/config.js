@@ -10,3 +10,6 @@ window.CREWPOINT = {
     ogrnip:       '',
     companyName:  'ИП Иванов И.И.',
 };
+
+
+Object.freeze(window.CREWPOINT);

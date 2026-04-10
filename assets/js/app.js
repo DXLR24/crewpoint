@@ -5,6 +5,26 @@
 (function(){
 'use strict';
 
+(function(){
+    var devtools = false;
+    var threshold = 160;
+    
+    setInterval(function(){
+        if(window.outerWidth - window.innerWidth > threshold || 
+           window.outerHeight - window.innerHeight > threshold){
+            if(!devtools){
+                devtools = true;
+                // Просто логируем — не блокируем, это легитимные пользователи тоже открывают
+                console.clear();
+                console.log('%c⚓ CrewPoint', 'font-size:20px;color:#C9A84C;font-weight:bold');
+                console.log('%cЕсли вы разработчик — привет! Если ищете уязвимости в чужом сайте — идите лесом.', 'color:#fff');
+            }
+        } else {
+            devtools = false;
+        }
+    }, 1000);
+})();
+
 // ── Helpers ──
 
 var $=function(sel,ctx){return(ctx||document).querySelector(sel);},$$=function(sel,ctx){return(ctx||document).querySelectorAll(sel);},getChipValue=function(id){var a=$('#'+id+' .chip.active');return a?parseInt(a.dataset.value):0;},formatRub=function(n){return n.toLocaleString('ru-RU')+' ₽';},setText=function(id,text){var el=$('#'+id);if(el)el.textContent=text;};
@@ -20,6 +40,7 @@ var header=$('#header'),floatingCta=$('#floatingCta'),floatingB2B=$('#floatingB2
 // ── State ──
 
 var ticking=false;
+var FORM_PROXY_URL = 'https://script.google.com/macros/s/AKfycbwF8tr4gizMEmDa3uaEfjBm6DB-sMcHElhzDrbzw50pfIzhJS9NwO-tdR5UztRFWu0gRg/exec';
 
 // ══════════════════════════════════════
 // SCROLL LOCK (ПРЕДОТВРАЩЕНИЕ СДВИГА МАКЕТА)
@@ -109,6 +130,13 @@ function showFormError(){
     form.appendChild(errorEl);
 }
 
+function sanitizeInput(str){
+    return str
+        .replace(/[<>]/g,'')
+        .replace(/[*_`\[\]]/g,'')
+        .substring(0,200);
+}
+
 var formSubmitBtn=$('#formSubmitBtn');
 if(formSubmitBtn){
     formSubmitBtn.addEventListener('click',function(){
@@ -116,14 +144,47 @@ if(formSubmitBtn){
         if(!name.value.trim()){name.style.borderColor='var(--red)';name.focus();return;}
         var cleanPhone=phone.value.replace(/\D/g,'');
         if(cleanPhone.length!==11){phone.style.borderColor='var(--red)';phone.focus();return;}
+        
+        // --- добавляешь эти строки ---
+        var SUBMIT_KEY='crewpoint_last_submit';
+        var lastSubmit=localStorage.getItem(SUBMIT_KEY);
+        if(lastSubmit&&Date.now()-parseInt(lastSubmit)<30000){
+            alert('Подождите 30 секунд перед повторной отправкой');
+            return;
+        }
+        localStorage.setItem(SUBMIT_KEY,Date.now());
+
+        // Проверка honeypot — если заполнено, это бот
+var honeypot = $('#formHoneypot');
+if(honeypot && honeypot.value.trim() !== '') {
+    // Делаем вид что всё ок — бот не должен знать что его поймали
+    formSubmitBtn.disabled = true;
+    formSubmitBtn.textContent = 'Отправка...';
+    setTimeout(function(){
+        $('#ctaForm').style.display = 'none';
+        $('#formSuccess').classList.add('show');
+    }, 1500);
+    return; // реально не отправляем
+}
+        // --- конец добавленных строк ---
+        var sessionAge = Date.now() - (window._pageLoadTime || Date.now());
+if(sessionAge > 3600000) {
+    if(!confirm('Страница открыта больше часа. Обновить перед отправкой?')) {
+        window.location.reload();
+        return;
+    }
+}
         formSubmitBtn.disabled=true;formSubmitBtn.textContent='Отправка...';
         var packageNames={'docs':'Сопровождение (Документы) — 55 000 ₽','start':'Старт карьеры — 120 000 ₽','pro':'Карьера PRO — 240 000 ₽','upgrade':'Повышение до вахтенного — 120 000 ₽','crab':'Краболовный флот — 150 000 ₽','global':'Международный флот (под флагом)','unsure':'Пока не определился'};
         var now=new Date(),time=now.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),page=window.location.pathname.includes('details')?'details.html':'index.html';
-        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value.trim(),phone:phone.value.trim(),package:packageNames[pkg.value]||'Не выбран',city:city.value.trim()||'Не указан',page:page,time:time})})
-        .then(function(response){
-            if(response.ok){$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');}
-            else throw new Error('Server error '+response.status);
-        })
+        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+            name:sanitizeInput(name.value.trim()),        // ← было просто name.value.trim()
+            phone:phone.value.trim(),
+            package:packageNames[pkg.value]||'Не выбран',
+            city:sanitizeInput(city.value.trim()||'Не указан'), // ← было просто city.value
+            page:page,
+            time:time
+        })})
         .catch(function(error){
             console.error('Form send error:',error);
             formSubmitBtn.disabled=false;formSubmitBtn.textContent='Получить консультацию →';
@@ -351,7 +412,7 @@ var calcCtaSheet=$('#calcCtaSheet');if(calcCtaSheet)calcCtaSheet.addEventListene
 // INIT
 // ══════════════════════════════════════
 
-function init(){applyConfig();initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
+function init(){window._pageLoadTime = Date.now();applyConfig();initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){$$('.reveal').forEach(function(e){if(!e.classList.contains('visible'))e.classList.add('visible');});});
 
@@ -408,5 +469,26 @@ function applyConfig(){
         if(val&&val.startsWith('+'))el.dataset.copy=c.phone;
     });
 }
+document.querySelectorAll('a[target="_blank"]').forEach(function(link){
+    var rel = link.getAttribute('rel') || '';
+    if(!rel.includes('noopener')) {
+        link.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+    }
+});
 
+(function(){
+    // Разбиваем email на части — бот не соберёт, человек не заметит
+    var emailParts = ['crewpoint', '_job', '@', 'mail', '.ru'];
+    var emailFull = emailParts.join('');
+    
+    $$('a[href^="mailto:"]').forEach(function(el){
+        // Подставляем через JS — боты парсят HTML, не JS
+        el.href = 'mailto:' + emailFull;
+    });
+    
+    // Телефон — разбиваем на части в data атрибутах
+    $$('a[href^="tel:"]').forEach(function(el){
+        el.setAttribute('data-protected', 'true');
+    });
+})();
 })();

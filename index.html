@@ -7,7 +7,7 @@
 <meta name="description" content="CrewPoint — карьерная платформа для морских специалистов. Документы за 14 дней. Три карьерных пути: вахтенный матрос, краболовный флот, международные суда.">
 <meta name="theme-color" content="#080C14"><meta name="color-scheme" content="dark">
 <meta property="og:type" content="website"><meta property="og:url" content="https://dxlr24.github.io/crewpoint/"><meta property="og:title" content="CrewPoint — От нуля до карьеры в море за 1 месяц"><meta property="og:description" content="Морские документы за 14 дней. Три карьерных пути: вахтенный матрос (150-200K ₽), краболовный флот Камчатки (до 500K ₽), международные суда ($2000-5000). 500+ моряков прошли через нас."><meta property="og:image" content="https://dxlr24.github.io/crewpoint/assets/images/og-cover.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:locale" content="ru_RU"><meta property="og:site_name" content="CrewPoint">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="CrewPoint — Карьера в море за 1 месяц"><meta name="twitter:description" content="Документы за 14 дней. Зарплата от 150 000 ₽/мес. 500+ моряков прошли через нас."><meta name="twitter:image" content="https://dxlr24.github.io/crewpoint/assets/images/og-cover.png">
+<meta name="twitter:card" content="summary_large_image"><meta http-equiv="X-Frame-Options" content="DENY"><meta name="twitter:title" content="CrewPoint — Карьера в море за 1 месяц"><meta name="twitter:description" content="Документы за 14 дней. Зарплата от 150 000 ₽/мес. 500+ моряков прошли через нас."><meta name="twitter:image" content="https://dxlr24.github.io/crewpoint/assets/images/og-cover.png">
 <meta http-equiv="Content-Security-Policy"
   content="default-src 'self';
            script-src 'self';
@@ -255,6 +255,10 @@
 <div class="form-group"><input type="tel" id="formPhone" placeholder="Телефон" required></div>
 <div class="form-group"><select id="formPackage"><option value="" disabled selected>Какой пакет интересует?</option><option value="docs">Сопровождение (Документы) — 55 000 ₽</option><option value="start">Старт карьеры — 120 000 ₽</option><option value="pro">Карьера PRO — 240 000 ₽</option><option value="upgrade">Повышение до вахтенного матроса — 120 000 ₽</option><option value="crab">Краболовный флот — Камчатка — 150 000 ₽</option><option value="global">Международный флот (под флагом)</option><option value="unsure">Пока не определился</option></select></div>
 <div class="form-group"><input type="text" id="formCity" placeholder="Ваш город"></div>
+<!-- Добавь после последнего form-group и ДО кнопки -->
+<div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+    <input type="text" id="formHoneypot" name="website" tabindex="-1" autocomplete="off">
+</div>
 <button type="button" class="btn btn--gold btn--lg form-submit" id="formSubmitBtn">Получить консультацию &rarr;</button>
 <p class="form-note">Ваши данные защищены. Перезвоним в течение 15 минут в рабочее время.</p>
 </div>
