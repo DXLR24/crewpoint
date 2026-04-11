@@ -138,7 +138,6 @@ if(formSubmitBtn){
         });
     });
 }
-$$('#ctaForm 
 $$('#ctaForm input').forEach(function(input){input.addEventListener('focus',function(){input.style.borderColor='var(--border-subtle)';});input.addEventListener('input',function(){input.style.borderColor='var(--border-subtle)';});});
 function applyPhoneMask(el){if(!el)return;function formatPhone(e){var v=e.target.value.replace(/\D/g,'');if(!v.length)return;if(v[0]==='8')v='7'+v.substring(1);if(v[0]!=='7')v='7'+v;var f='+7';if(v.length>1)f+=' ('+v.substring(1,4);if(v.length>4)f+=') '+v.substring(4,7);if(v.length>7)f+='-'+v.substring(7,9);if(v.length>9)f+='-'+v.substring(9,11);e.target.value=f;}el.addEventListener('input',formatPhone);el.addEventListener('paste',function(e){setTimeout(function(){el.dispatchEvent(new Event('input'));},0);});}
 applyPhoneMask($('#formPhone'));
