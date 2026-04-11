@@ -123,28 +123,14 @@ if(formSubmitBtn){
         if(!name.value.trim()){name.style.borderColor='var(--red)';name.focus();return;}
         var cleanPhone=phone.value.replace(/\D/g,'');
         if(cleanPhone.length!==11){phone.style.borderColor='var(--red)';phone.focus();return;}
-        
-        // --- добавляешь эти строки ---
-        var SUBMIT_KEY='crewpoint_last_submit';
-        var lastSubmit=localStorage.getItem(SUBMIT_KEY);
-        if(lastSubmit&&Date.now()-parseInt(lastSubmit)<30000){
-            alert('Подождите 30 секунд перед повторной отправкой');
-            return;
-        }
-        localStorage.setItem(SUBMIT_KEY,Date.now());
-        // --- конец добавленных строк ---
-        
         formSubmitBtn.disabled=true;formSubmitBtn.textContent='Отправка...';
         var packageNames={'docs':'Сопровождение (Документы) — 55 000 ₽','start':'Старт карьеры — 120 000 ₽','pro':'Карьера PRO — 240 000 ₽','upgrade':'Повышение до вахтенного — 120 000 ₽','crab':'Краболовный флот — 150 000 ₽','global':'Международный флот (под флагом)','unsure':'Пока не определился'};
         var now=new Date(),time=now.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),page=window.location.pathname.includes('details')?'details.html':'index.html';
-        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-            name:sanitizeInput(name.value.trim()),        // ← было просто name.value.trim()
-            phone:phone.value.trim(),
-            package:packageNames[pkg.value]||'Не выбран',
-            city:sanitizeInput(city.value.trim()||'Не указан'), // ← было просто city.value
-            page:page,
-            time:time
-        })})
+        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value.trim(),phone:phone.value.trim(),package:packageNames[pkg.value]||'Не выбран',city:city.value.trim()||'Не указан',page:page,time:time})})
+        .then(function(response){
+            if(response.ok){$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');}
+            else throw new Error('Server error '+response.status);
+        })
         .catch(function(error){
             console.error('Form send error:',error);
             formSubmitBtn.disabled=false;formSubmitBtn.textContent='Получить консультацию →';
