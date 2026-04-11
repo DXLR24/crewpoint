@@ -5,26 +5,6 @@
 (function(){
 'use strict';
 
-(function(){
-    var devtools = false;
-    var threshold = 160;
-    
-    setInterval(function(){
-        if(window.outerWidth - window.innerWidth > threshold || 
-           window.outerHeight - window.innerHeight > threshold){
-            if(!devtools){
-                devtools = true;
-                // Просто логируем — не блокируем, это легитимные пользователи тоже открывают
-                console.clear();
-                console.log('%c⚓ CrewPoint', 'font-size:20px;color:#C9A84C;font-weight:bold');
-                console.log('%cЕсли вы разработчик — привет! Если ищете уязвимости в чужом сайте — идите лесом.', 'color:#fff');
-            }
-        } else {
-            devtools = false;
-        }
-    }, 1000);
-})();
-
 // ── Helpers ──
 
 var $=function(sel,ctx){return(ctx||document).querySelector(sel);},$$=function(sel,ctx){return(ctx||document).querySelectorAll(sel);},getChipValue=function(id){var a=$('#'+id+' .chip.active');return a?parseInt(a.dataset.value):0;},formatRub=function(n){return n.toLocaleString('ru-RU')+' ₽';},setText=function(id,text){var el=$('#'+id);if(el)el.textContent=text;};
@@ -40,7 +20,6 @@ var header=$('#header'),floatingCta=$('#floatingCta'),floatingB2B=$('#floatingB2
 // ── State ──
 
 var ticking=false;
-var FORM_PROXY_URL = 'https://script.google.com/macros/s/AKfycbz2jSp_AhcHwF9BUW-AefvEO7ymq1ZnDyTsxckNL1tPghf0qAwnvApt7hFLSJCKKDKhIw/exec';
 
 // ══════════════════════════════════════
 // SCROLL LOCK (ПРЕДОТВРАЩЕНИЕ СДВИГА МАКЕТА)
@@ -137,158 +116,31 @@ function sanitizeInput(str){
         .substring(0,200);
 }
 
-// ── Санитизация ──
-function sanitizeInput(str){
-    return str
-        .replace(/[<>]/g,'')
-        .replace(/[*_`\[\]]/g,'')
-        .substring(0,200);
-}
-
 var formSubmitBtn=$('#formSubmitBtn');
 if(formSubmitBtn){
     formSubmitBtn.addEventListener('click',function(){
-
-        // Получаем поля
-        var name=$('#formName'),
-            phone=$('#formPhone'),
-            pkg=$('#formPackage'),
-            city=$('#formCity'),
-            honeypot=$('#formHoneypot');
-
-        // Honeypot — если заполнено, это бот
-        if(honeypot && honeypot.value.trim()!==''){
-            formSubmitBtn.disabled=true;
-            formSubmitBtn.textContent='Отправка...';
-            setTimeout(function(){
-                $('#ctaForm').style.display='none';
-                $('#formSuccess').classList.add('show');
-            },1500);
-            return;
-        }
-
-        // Защита от спама через localStorage
-        var SUBMIT_KEY='crewpoint_last_submit';
-        var lastSubmit=localStorage.getItem(SUBMIT_KEY);
-        if(lastSubmit && Date.now()-parseInt(lastSubmit)<30000){
-            alert('Подождите 30 секунд перед повторной отправкой');
-            return;
-        }
-
-        // Таймаут сессии
-        var sessionAge=Date.now()-(window._pageLoadTime||Date.now());
-        if(sessionAge>3600000){
-            if(!confirm('Страница открыта больше часа. Обновить перед отправкой?')){
-                window.location.reload();
-                return;
-            }
-        }
-
-        // Валидация имени
-        if(!name.value.trim()){
-            name.style.borderColor='var(--red)';
-            name.focus();
-            return;
-        }
-
-        // Валидация телефона
+        var name=$('#formName'),phone=$('#formPhone'),pkg=$('#formPackage'),city=$('#formCity');
+        if(!name.value.trim()){name.style.borderColor='var(--red)';name.focus();return;}
         var cleanPhone=phone.value.replace(/\D/g,'');
-        if(cleanPhone.length!==11){
-            phone.style.borderColor='var(--red)';
-            phone.focus();
-            return;
-        }
-
-        // Блокируем кнопку
-        formSubmitBtn.disabled=true;
-        formSubmitBtn.textContent='Отправка...';
-
-        // Запоминаем время отправки
-        localStorage.setItem(SUBMIT_KEY,Date.now());
-
-        // Названия пакетов
-        var packageNames={
-            'docs':'Сопровождение (Документы) — 55 000 ₽',
-            'start':'Старт карьеры — 120 000 ₽',
-            'pro':'Карьера PRO — 240 000 ₽',
-            'upgrade':'Повышение до вахтенного — 120 000 ₽',
-            'crab':'Краболовный флот — 150 000 ₽',
-            'global':'Международный флот (под флагом)',
-            'unsure':'Пока не определился'
-        };
-
-        var now=new Date(),
-            time=now.toLocaleString('ru-RU',{
-                day:'2-digit',month:'2-digit',year:'numeric',
-                hour:'2-digit',minute:'2-digit'
-            }),
-            page=window.location.pathname.includes('details')
-                ?'details.html'
-                :'index.html';
-
-        // Формируем URLSearchParams — самый стабильный формат для Google Script
-        var params=new URLSearchParams();
-        params.append('name',    sanitizeInput(name.value.trim()));
-        params.append('phone',   phone.value.trim());
-        params.append('package', packageNames[pkg.value]||'Не выбран');
-        params.append('city',    sanitizeInput(city.value.trim()||'Не указан'));
-        params.append('page',    page);
-        params.append('time',    time);
-
-        // Отправка — no-cors, не ждём response.ok (он всегда false в no-cors)
-        fetch(FORM_PROXY_URL,{
-            method:'POST',
-            mode:'no-cors',
-            body:params
-            // Content-Type НЕ указываем — браузер сам поставит
-            // application/x-www-form-urlencoded, что и нужно
-        })
-        .then(function(){
-            // В no-cors .then срабатывает после завершения запроса
-            // response.ok проверять нельзя — всегда false
-            $('#ctaForm').style.display='none';
-            $('#formSuccess').classList.add('show');
+        if(cleanPhone.length!==11){phone.style.borderColor='var(--red)';phone.focus();return;}
+        formSubmitBtn.disabled=true;formSubmitBtn.textContent='Отправка...';
+        var packageNames={'docs':'Сопровождение (Документы) — 55 000 ₽','start':'Старт карьеры — 120 000 ₽','pro':'Карьера PRO — 240 000 ₽','upgrade':'Повышение до вахтенного — 120 000 ₽','crab':'Краболовный флот — 150 000 ₽','global':'Международный флот (под флагом)','unsure':'Пока не определился'};
+        var now=new Date(),time=now.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),page=window.location.pathname.includes('details')?'details.html':'index.html';
+        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value.trim(),phone:phone.value.trim(),package:packageNames[pkg.value]||'Не выбран',city:city.value.trim()||'Не указан',page:page,time:time})})
+        .then(function(response){
+            if(response.ok){$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');}
+            else throw new Error('Server error '+response.status);
         })
         .catch(function(error){
             console.error('Form send error:',error);
-            formSubmitBtn.disabled=false;
-            formSubmitBtn.textContent='Получить консультацию →';
+            formSubmitBtn.disabled=false;formSubmitBtn.textContent='Получить консультацию →';
             showFormError();
         });
-
-    }); // конец addEventListener
-} // конец if(formSubmitBtn)
-
-// Сброс подсветки ошибок при вводе
-$$('#ctaForm input').forEach(function(input){
-    input.addEventListener('focus',function(){
-        input.style.borderColor='var(--border-subtle)';
-    });
-    input.addEventListener('input',function(){
-        input.style.borderColor='var(--border-subtle)';
-    });
-});
-
-// Маска телефона
-function applyPhoneMask(el){
-    if(!el)return;
-    function formatPhone(e){
-        var v=e.target.value.replace(/\D/g,'');
-        if(!v.length)return;
-        if(v[0]==='8')v='7'+v.substring(1);
-        if(v[0]!=='7')v='7'+v;
-        var f='+7';
-        if(v.length>1)f+=' ('+v.substring(1,4);
-        if(v.length>4)f+=') '+v.substring(4,7);
-        if(v.length>7)f+='-'+v.substring(7,9);
-        if(v.length>9)f+='-'+v.substring(9,11);
-        e.target.value=f;
-    }
-    el.addEventListener('input',formatPhone);
-    el.addEventListener('paste',function(e){
-        setTimeout(function(){el.dispatchEvent(new Event('input'));},0);
     });
 }
+$$('#ctaForm 
+$$('#ctaForm input').forEach(function(input){input.addEventListener('focus',function(){input.style.borderColor='var(--border-subtle)';});input.addEventListener('input',function(){input.style.borderColor='var(--border-subtle)';});});
+function applyPhoneMask(el){if(!el)return;function formatPhone(e){var v=e.target.value.replace(/\D/g,'');if(!v.length)return;if(v[0]==='8')v='7'+v.substring(1);if(v[0]!=='7')v='7'+v;var f='+7';if(v.length>1)f+=' ('+v.substring(1,4);if(v.length>4)f+=') '+v.substring(4,7);if(v.length>7)f+='-'+v.substring(7,9);if(v.length>9)f+='-'+v.substring(9,11);e.target.value=f;}el.addEventListener('input',formatPhone);el.addEventListener('paste',function(e){setTimeout(function(){el.dispatchEvent(new Event('input'));},0);});}
 applyPhoneMask($('#formPhone'));
 
 // ══════════════════════════════════════
@@ -507,7 +359,7 @@ var calcCtaSheet=$('#calcCtaSheet');if(calcCtaSheet)calcCtaSheet.addEventListene
 // INIT
 // ══════════════════════════════════════
 
-function init(){window._pageLoadTime = Date.now();applyConfig();initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
+function init(){applyConfig();initReveal();initOnlineStatus();renderCohorts();renderSeasonTimer();calculateFromChips();initGlow();initCounters();initAmbientBlobs();initTilt();initNavHighlight();initRipple();setInterval(function(){var box=$('#seasonBox');if(!box)return;renderSeasonTimer();},60000);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 window.addEventListener('load',function(){$$('.reveal').forEach(function(e){if(!e.classList.contains('visible'))e.classList.add('visible');});});
 
@@ -564,26 +416,5 @@ function applyConfig(){
         if(val&&val.startsWith('+'))el.dataset.copy=c.phone;
     });
 }
-document.querySelectorAll('a[target="_blank"]').forEach(function(link){
-    var rel = link.getAttribute('rel') || '';
-    if(!rel.includes('noopener')) {
-        link.setAttribute('rel', (rel + ' noopener noreferrer').trim());
-    }
-});
 
-(function(){
-    // Разбиваем email на части — бот не соберёт, человек не заметит
-    var emailParts = ['crewpoint', '_job', '@', 'mail', '.ru'];
-    var emailFull = emailParts.join('');
-    
-    $$('a[href^="mailto:"]').forEach(function(el){
-        // Подставляем через JS — боты парсят HTML, не JS
-        el.href = 'mailto:' + emailFull;
-    });
-    
-    // Телефон — разбиваем на части в data атрибутах
-    $$('a[href^="tel:"]').forEach(function(el){
-        el.setAttribute('data-protected', 'true');
-    });
-})();
 })();
