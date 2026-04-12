@@ -109,13 +109,6 @@ function showFormError(){
     form.appendChild(errorEl);
 }
 
-function sanitizeInput(str){
-    return str
-        .replace(/[<>]/g,'')
-        .replace(/[*_`\[\]]/g,'')
-        .substring(0,200);
-}
-
 var formSubmitBtn=$('#formSubmitBtn');
 if(formSubmitBtn){
     formSubmitBtn.addEventListener('click',function(){
