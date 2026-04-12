@@ -5,6 +5,11 @@
 (function(){
 'use strict';
 
+// ── Security ── 
+var FORM_RATE_LIMIT_KEY = 'cp_last_submit';
+var FORM_RATE_LIMIT_MS  = 5 * 60 * 1000; // 5 минут между отправками
+var PAGE_LOAD_TIME      = Date.now();     // таймер загрузки
+
 // ── Helpers ──
 
 var $=function(sel,ctx){return(ctx||document).querySelector(sel);},$$=function(sel,ctx){return(ctx||document).querySelectorAll(sel);},getChipValue=function(id){var a=$('#'+id+' .chip.active');return a?parseInt(a.dataset.value):0;},formatRub=function(n){return n.toLocaleString('ru-RU')+' ₽';},setText=function(id,text){var el=$('#'+id);if(el)el.textContent=text;};
@@ -110,19 +115,69 @@ function showFormError(){
 }
 
 var formSubmitBtn=$('#formSubmitBtn');
+var formSubmitBtn=$('#formSubmitBtn');
 if(formSubmitBtn){
     formSubmitBtn.addEventListener('click',function(){
+
+        // 1. Honeypot: бот заполнил — тихо игнорируем
+        var honeypot=$('#formWebsite');
+        if(honeypot&&honeypot.value.trim()!==''){
+            formSubmitBtn.disabled=true;
+            $('#ctaForm').style.display='none';
+            $('#formSuccess').classList.add('show');
+            return;
+        }
+
+        // 2. Тайминг: слишком быстро — это бот (< 2 секунд с момента загрузки)
+        if(Date.now()-PAGE_LOAD_TIME < 2000){
+            return;
+        }
+
+        // 3. Rate limit: не чаще раза в 5 минут с одного браузера
+        try{
+            var lastSubmit=parseInt(sessionStorage.getItem(FORM_RATE_LIMIT_KEY)||'0',10);
+            if(Date.now()-lastSubmit < FORM_RATE_LIMIT_MS){
+                var minLeft=Math.ceil((FORM_RATE_LIMIT_MS-(Date.now()-lastSubmit))/60000);
+                var name=$('#formName'),phone=$('#formPhone');
+                if(name)name.style.borderColor='';
+                if(phone)phone.style.borderColor='';
+                var existing=$('#formError');
+                if(existing)existing.remove();
+                var rateEl=document.createElement('div');
+                rateEl.id='formError';
+                rateEl.style.cssText='margin-top:16px;padding:16px 20px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;text-align:center';
+                rateEl.innerHTML='<p style="font-size:.88rem;color:var(--gold)">Заявка уже отправлена. Повторно можно через '+minLeft+' мин.</p>';
+                $('#ctaForm').appendChild(rateEl);
+                return;
+            }
+        }catch(e){}
+
+        // 4. Валидация имени (только буквы, минимум 2 символа)
         var name=$('#formName'),phone=$('#formPhone'),pkg=$('#formPackage'),city=$('#formCity');
-        if(!name.value.trim()){name.style.borderColor='var(--red)';name.focus();return;}
+        if(!name.value.trim()||name.value.trim().length<2){
+            name.style.borderColor='var(--red)';name.focus();return;
+        }
+        if(!/^[а-яёА-ЯЁa-zA-Z\s\-]+$/.test(name.value.trim())){
+            name.style.borderColor='var(--red)';name.focus();return;
+        }
+
+        // 5. Валидация телефона
         var cleanPhone=phone.value.replace(/\D/g,'');
         if(cleanPhone.length!==11){phone.style.borderColor='var(--red)';phone.focus();return;}
+
         formSubmitBtn.disabled=true;formSubmitBtn.textContent='Отправка...';
+
         var packageNames={'docs':'Сопровождение (Документы) — 55 000 ₽','start':'Старт карьеры — 120 000 ₽','pro':'Карьера PRO — 240 000 ₽','upgrade':'Повышение до вахтенного — 120 000 ₽','crab':'Краболовный флот — 150 000 ₽','global':'Международный флот (под флагом)','unsure':'Пока не определился'};
         var now=new Date(),time=now.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),page=window.location.pathname.includes('details')?'details.html':'index.html';
-        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value.trim(),phone:phone.value.trim(),package:packageNames[pkg.value]||'Не выбран',city:city.value.trim()||'Не указан',page:page,time:time})})
+
+        fetch(FORM_PROXY_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name.value.trim(),phone:phone.value.trim(),package:packageNames[pkg.value]||'Не выбран',city:city.value.trim()||'Не указан',page:page,time:time,_hp:honeypot?honeypot.value:''})})
         .then(function(response){
-            if(response.ok){$('#ctaForm').style.display='none';$('#formSuccess').classList.add('show');}
-            else throw new Error('Server error '+response.status);
+            if(response.ok){
+                // Сохраняем время успешной отправки
+                try{sessionStorage.setItem(FORM_RATE_LIMIT_KEY,Date.now().toString());}catch(e){}
+                $('#ctaForm').style.display='none';
+                $('#formSuccess').classList.add('show');
+            }else throw new Error('Server error '+response.status);
         })
         .catch(function(error){
             console.error('Form send error:',error);
