@@ -422,11 +422,18 @@ function applyConfig(){
         if(el.textContent.trim().startsWith('+'))el.textContent=c.phoneDisplay;
     });
 
-    // Email — ссылки href
-    $$('a[href^="mailto:"]').forEach(function(el){
-        el.href='mailto:'+c.email;
-        if(el.textContent.includes('@'))el.textContent=c.email;
+    // Email — ссылки href + защита от скрейперов (data-атрибут вместо прямого href)
+$$('a[href^="mailto:"]').forEach(function(el){
+    var parts=c.email.split('@');
+    el.removeAttribute('href');
+    el.dataset.u=parts[0];
+    el.dataset.d=parts[1];
+    el.style.cursor='pointer';
+    if(el.textContent.includes('@'))el.textContent=c.email;
+    el.addEventListener('click',function(){
+        window.location.href='mailto:'+el.dataset.u+'@'+el.dataset.d;
     });
+});
 
     // WhatsApp
     $$('a[href*="wa.me"]').forEach(function(el){
